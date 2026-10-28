@@ -1,10 +1,10 @@
 # **Personal Finance Manager — CS160 Group 02 Final Project**
 
 > **Course:** CS160 - Introduction to Programming (APCS)  
-> **Semester**: HK1 2026-2027
-> **Language**: C++17
->**GitHub Repository**: https://github.com/thvy2507/CS160-Group02-FinalProject
-> **Status:** In Development
+> **Semester**: HK1 2026-2027  
+> **Language**: C++17  
+> **GitHub Repository**: https://github.com/thvy2507/CS160-Group02-FinalProject  
+> **Status:** In Development  
 > **Team size**: 4 members | **Time**: 5 weeks
 
 ---
