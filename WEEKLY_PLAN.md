@@ -2,8 +2,7 @@
 
 > **Mục tiêu:** Hoàn thành ứng dụng Personal Finance Manager bằng C++ theo yêu cầu của đề bài.
 >
-> **Demo checkpoint cuối mỗi tuần:** Cả nhóm build và kiểm thử các chức năng đã hoàn thành. Không chấp nhận chức năng được đánh dấu hoàn thành nhưng chưa chạy thử.
-
+> **Demo checkpoint (Thứ Sáu hằng tuần)**: Cả nhóm build, kiểm thử các chức năng đã hoàn thành và tổng hợp tiến độ để nộp Weekly Report. Những công việc chưa hoàn thành phải được ghi rõ, không đánh dấu hoàn thành khi chưa kiểm thử.
 ---
 
 ## Tuần 1 — Setup & Architecture

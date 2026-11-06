@@ -33,9 +33,13 @@ docs/...   ← documentation updates
    → Other members may also review and leave comments
    → Fix any issues identified during review
 
-5. End of week (Sunday):
-   TV1 reviews all ready Pull Requests
-   Whole team pulls main and rebuilds to confirm
+5. Thursday:
+   TV1 reviews and merges all ready Pull Requests into main.
+
+6. Friday:
+   Whole team pulls main and rebuilds the project.
+   Run the weekly demo checkpoint.
+   Complete and submit the Weekly Report.
 ```
 
 ### Commit Message Format
@@ -76,6 +80,7 @@ wip
 ### Language Rule
 
 - **English Only**: All code identifiers (variable names, class names, functions, etc.), source comments, and project documentation must be written in English.
+- Planning documents may be written in Vietnamese.
 
 ### Naming
 
@@ -252,7 +257,7 @@ Before creating a PR, check yourself:
 
 - **Weekly Sync Meeting (~30 minutes):** Each member reports progress and tasks for the week.
 - **Mid-week Sync (~15 minutes):** Discuss blockers, dependencies, and interface changes.
-- **Sunday Demo Checkpoint:** Build and run the application, demonstrate completed features, and verify the weekly checklist.
+- **Friday Demo Checkpoint**: Build and run the application, demonstrate completed features, and verify the weekly checklist before submitting the Weekly Report.
 - **Communication Channels:** Use the group's agreed communication platform for updates and technical discussions.
 - **GitHub Pull Requests:** Use PR comments for code reviews and implementation feedback.
 
