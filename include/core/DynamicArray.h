@@ -12,6 +12,7 @@
 template <typename T>
 class DynamicArray {
 public:
+    // Constructors, Destructor & Copy Assignment
     explicit DynamicArray(int initialCapacity = 4)
         : m_data(nullptr), m_size(0), m_capacity(initialCapacity) {
         if (initialCapacity <= 0) {
@@ -60,6 +61,7 @@ public:
         delete[] m_data;
     }
 
+    // Modification Methods
     void add(const T& value) {
         T copiedValue = value;
 
@@ -69,6 +71,27 @@ public:
 
         m_data[m_size] = copiedValue;
         ++m_size;
+    }
+
+    void clear() {
+        m_size = 0;
+    }
+
+    void remove(int index) {
+        if (index < 0 || index >= m_size) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        for (int i = index; i < m_size - 1; ++i) {
+            m_data[i] = m_data[i + 1];
+        }
+
+        --m_size;
+    }
+
+    // Accessors
+    bool empty() const {
+        return m_size == 0;
     }
 
     T& get(int index) {
@@ -85,15 +108,24 @@ public:
         return m_data[index];
     }
 
+    int getSize() const {
+        return m_size;
+    }
+
     int size() const {
         return m_size;
     }
 
-    bool empty() const {
-        return m_size == 0;
+    T& operator[](int index) {
+        return get(index);
+    }
+
+    const T& operator[](int index) const {
+        return get(index);
     }
 
 private:
+    // Private Helpers
     void grow() {
         int newCapacity = m_capacity * 2;
         T* newData = new T[newCapacity];
@@ -112,6 +144,7 @@ private:
         m_capacity = newCapacity;
     }
 
+    // Private Members
     T* m_data;
     int m_size;
     int m_capacity;
