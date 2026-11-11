@@ -6,6 +6,7 @@ project(PersonalFinanceManager LANGUAGES CXX)
 add_executable(PersonalFinanceManager
     src/main.cpp
     src/core/FinanceManager.cpp
+    src/core/Date.cpp
 )
 
 target_compile_features(PersonalFinanceManager PRIVATE cxx_std_17)
