@@ -18,17 +18,17 @@ const int MAX_DAY_OF_MONTH = 31;
 
 class RecurringTransaction {
 public:
+    // Constants
+    static constexpr int INVALID_ID = 0;
+
+    // Constructors
     RecurringTransaction();
     RecurringTransaction(int id, TransactionType type, long long amount,
                          const std::string& description, int walletId,
                          int sourceOrCategoryId, const Date& startDate,
                          int dayOfMonth);
 
-    void clearEndDate();
-    bool hasEndDate() const;
-    bool hasLastGeneratedDate() const;
-    bool isActive() const;
-
+    // Getters
     long long getAmount() const;
     int getDayOfMonth() const;
     std::string getDescription() const;
@@ -39,7 +39,11 @@ public:
     Date getStartDate() const;
     TransactionType getType() const;
     int getWalletId() const;
+    bool hasEndDate() const;
+    bool hasLastGeneratedDate() const;
+    bool isActive() const;
 
+    // Setters
     void setActive(bool isActive);
     void setAmount(long long amount);
     void setDayOfMonth(int dayOfMonth);
@@ -51,7 +55,11 @@ public:
     void setStartDate(const Date& startDate);
     void setWalletId(int walletId);
 
+    // Date Operations
+    void clearEndDate();
+
 private:
+    // Private Members
     int m_id;
     TransactionType m_type;
     long long m_amount;
@@ -61,12 +69,12 @@ private:
     Date m_startDate;
     bool m_hasEndDate;
     Date m_endDate;
-    // Day of the month (1-31). If a month has fewer days, use its last day
+    // Use the last day for shorter months
     int m_dayOfMonth;
     bool m_hasLastGeneratedDate;
-    // Latest occurrence already generated. Used to avoid duplicates
     Date m_lastGeneratedDate;
     bool m_isActive;
 };
+
 
 #endif

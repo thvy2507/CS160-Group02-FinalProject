@@ -17,25 +17,32 @@ class ExpenseCategoryManager;
 
 class RecurringTransactionManager {
 public:
+    // Constructors & Destructor
     RecurringTransactionManager(WalletManager* walletManager,
                                 IncomeSourceManager* incomeSourceManager,
                                 ExpenseCategoryManager* expenseCategoryManager);
     ~RecurringTransactionManager();
 
+    // CRUD Operations
     bool createRecurringTransaction(const RecurringTransaction& recurring);
     bool deleteRecurringTransaction(int id);
     bool editRecurringTransaction(int id, const RecurringTransaction& updated);
     void viewAllRecurringTransactions() const;
     bool viewRecurringTransaction(int id) const;
 
+    // Search & Access
     const RecurringTransaction* getRecurringTransactionById(int id) const;
     int getRecurringTransactionCount() const;
 
 private:
+    // Private Helpers
     int findRecurringIndex(int id) const;
 
+    // Private Members
     DynamicArray<RecurringTransaction> m_recurringTransactions;
     int m_nextId;
+
+    // Non-owning Manager Pointers
     WalletManager* m_walletManager;
     IncomeSourceManager* m_incomeSourceManager;
     ExpenseCategoryManager* m_expenseCategoryManager;

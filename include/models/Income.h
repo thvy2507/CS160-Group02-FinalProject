@@ -12,17 +12,23 @@
 
 class Income : public Transaction {
 public:
+    // Constructors & Destructor
     Income();
     Income(int id, const Date& date, long long amount,
            const std::string& description, int walletId, int incomeSourceId);
     ~Income() override;
 
+    // Getters
     int getIncomeSourceId() const;
     TransactionType getType() const override;
+
+    // Setters
     void setIncomeSourceId(int incomeSourceId);
 
 private:
+    // Private Members
     int m_incomeSourceId;
 };
+
 
 #endif

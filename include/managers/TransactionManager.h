@@ -19,11 +19,13 @@ class ExpenseCategoryManager;
 
 class TransactionManager {
 public:
+    // Constructors & Destructor
     TransactionManager(WalletManager* walletManager,
                        IncomeSourceManager* incomeSourceManager,
                        ExpenseCategoryManager* expenseCategoryManager);
     ~TransactionManager();
 
+    // CRUD Operations
     bool addExpense(const Expense& expense);
     bool addIncome(const Income& income);
     bool deleteTransaction(int id);
@@ -32,16 +34,21 @@ public:
     void viewAllTransactions() const;
     bool viewTransaction(int id) const;
 
+    // Search & Access
     const Transaction* getTransactionAt(int index) const;
     const Transaction* getTransactionById(int id) const;
     int getTransactionCount() const;
 
 private:
+    // Disable Copying
     TransactionManager(const TransactionManager&) = delete;
     TransactionManager& operator=(const TransactionManager&) = delete;
 
+    // Private Helpers
     int findTransactionIndex(int id) const;
 
+    // Private Members
+    // Owns the allocated transactions
     DynamicArray<Transaction*> m_transactions;
     int m_nextId;
     WalletManager* m_walletManager;
