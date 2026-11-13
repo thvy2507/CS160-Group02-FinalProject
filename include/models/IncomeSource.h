@@ -12,7 +12,7 @@
 #include <type_traits>
 
 // Fixed-size record for binary storage.
-// Wallet names are stored separately in the Name Pool.
+// Income source names are stored separately in the Name Pool.
 struct IncomeSourceRecord {
     int32_t id;
     uint32_t nameOffset;
@@ -48,9 +48,9 @@ public:
 
 private:
     // Private Members
-    int id_;
-    std::string name_;
-    bool isDeleted_;
+    int m_id;
+    std::string m_name;
+    bool m_isDeleted;
 };
 
 #endif // MODELS_INCOME_SOURCE_H

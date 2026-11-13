@@ -12,7 +12,7 @@
 #include <type_traits>
 
 // Fixed-size record for binary storage.
-// Wallet names are stored separately in the Name Pool.
+// Category names are stored separately in the Name Pool.
 struct ExpenseCategoryRecord {
     int32_t id;
     uint32_t nameOffset;
@@ -47,7 +47,7 @@ public:
     static ExpenseCategory fromRecord(const ExpenseCategoryRecord& record, const std::string& resolvedName);
 
 private:
-    // Private Memberse
+    // Private Members
     int m_id;
     std::string m_name;
     bool m_isDeleted;
