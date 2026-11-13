@@ -1,3 +1,9 @@
+/**
+ * @file WalletManager.h
+ * @author TV2 (Khoi)
+ * @brief Manages wallets and their balances.
+ */
+
 #ifndef MANAGERS_WALLET_MANAGER_H
 #define MANAGERS_WALLET_MANAGER_H
 
@@ -7,23 +13,17 @@
 
 class WalletManager {
 public:
+    // Constructors & Destructor
     WalletManager();
     ~WalletManager() = default;
 
-    // --- Thao tac CRUD chinh ---
-    // Tao vi moi, tra ve Object ID cua vi vua tao (tra ve Wallet::INVALID_ID neu that bai/trung ten)
+    // CRUD Operations
     int addWallet(const std::string& name, Money initialBalance = 0);
-
-    // Chinh sua ten vi theo ID
     bool editWalletName(int walletId, const std::string& newName);
-
-    // Xoa mem vi theo ID (chi xoa khi khong bi rang buoc hoac theo quy tac)
     bool deleteWallet(int walletId);
-
-    // Hien thi danh sach vi ra CLI
     void viewAllWallets() const;
 
-    // --- Truy van & Tim kiem (Phuc vu TV3 Transaction & TV4 Statistics) ---
+    // Search & Access
     bool exists(int walletId) const;
     int findIndexById(int walletId) const;
     int findIndexByName(const std::string& name) const;
@@ -35,7 +35,6 @@ public:
     const DynamicArray<Wallet>& getAllWallets() const;
     int getActiveWalletCount() const;
 
-    // --- Quan ly So du Vi (Phuc vu TV3 Transaction & TV4 Dashboard) ---
     Money getWalletBalance(int walletId) const;
     Money getTotalBalance() const;
 
@@ -44,13 +43,14 @@ public:
     bool withdraw(int walletId, Money amount, bool allowNegative = false);
     bool adjustBalance(int walletId, Money delta);
 
-    // --- Binary Persistence Hooks (Implement chi tiet o tuan sau) ---
+    // Binary Persistence
     bool loadFromBinary(const std::string& recordFilePath, const std::string& namePoolPath);
     bool saveToBinary(const std::string& recordFilePath, const std::string& namePoolPath) const;
 
 private:
-    DynamicArray<Wallet> wallets_;
-    int nextId_;
+    // Private Members
+    DynamicArray<Wallet> m_wallets;
+    int m_nextId;
 };
 
 #endif // MANAGERS_WALLET_MANAGER_H

@@ -1,3 +1,9 @@
+/**
+ * @file IncomeSourceManager.h
+ * @author TV2 (Khoi)
+ * @brief Manages income sources.
+ */
+
 #ifndef MANAGERS_INCOME_SOURCE_MANAGER_H
 #define MANAGERS_INCOME_SOURCE_MANAGER_H
 
@@ -7,16 +13,17 @@
 
 class IncomeSourceManager {
 public:
+    // Constructors & Destructor
     IncomeSourceManager();
     ~IncomeSourceManager() = default;
 
-    // --- Thao tac CRUD chinh ---
+    // CRUD Operations
     int addIncomeSource(const std::string& name);
     bool editIncomeSource(int sourceId, const std::string& newName);
     bool deleteIncomeSource(int sourceId);
     void viewAllIncomeSources() const;
 
-    // --- Truy van & Tim kiem (Phuc vu TV3 Transaction & TV4 Statistics) ---
+    // Search & Access
     bool exists(int sourceId) const;
     int findIndexById(int sourceId) const;
     int findIndexByName(const std::string& name) const;
@@ -28,13 +35,14 @@ public:
     const DynamicArray<IncomeSource>& getAllIncomeSources() const;
     int getActiveCount() const;
 
-    // --- Binary Persistence Hooks ---
+    // Binary Persistence
     bool loadFromBinary(const std::string& recordFilePath, const std::string& namePoolPath);
     bool saveToBinary(const std::string& recordFilePath, const std::string& namePoolPath) const;
 
 private:
-    DynamicArray<IncomeSource> sources_;
-    int nextId_;
+    // Private Members
+    DynamicArray<IncomeSource> m_sources;
+    int m_nextId;
 };
 
 #endif // MANAGERS_INCOME_SOURCE_MANAGER_H

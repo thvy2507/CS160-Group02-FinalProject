@@ -1,3 +1,9 @@
+/**
+ * @file IncomeSource.h
+ * @author TV2 (Khoi)
+ * @brief Defines the income source model and binary record.
+ */
+
 #ifndef MODELS_INCOME_SOURCE_H
 #define MODELS_INCOME_SOURCE_H
 
@@ -5,12 +11,13 @@
 #include <string>
 #include <type_traits>
 
-// Ban ghi kich thuoc co dinh (Fixed-size Record) cho IncomeSource
+// Fixed-size record for binary storage.
+// Wallet names are stored separately in the Name Pool.
 struct IncomeSourceRecord {
-    int32_t id;             // Object ID duy nhat
-    uint32_t nameOffset;    // Vi tri byte bat dau cua ten nguon thu trong Name Pool
-    uint32_t nameLength;    // Do dai ten nguon thu (tinh bang byte)
-    uint8_t isDeleted;      // Co xoa mem: 0 = Active, 1 = Deleted
+    int32_t id;
+    uint32_t nameOffset;
+    uint32_t nameLength;
+    uint8_t isDeleted;
 };
 
 static_assert(std::is_trivially_copyable_v<IncomeSourceRecord>,
@@ -18,12 +25,11 @@ static_assert(std::is_trivially_copyable_v<IncomeSourceRecord>,
 
 class IncomeSource {
 public:
+    // Constants
     static constexpr int INVALID_ID = 0;
 
-    // Default constructor (bat buoc cho DynamicArray<IncomeSource>)
+    // Constructors
     IncomeSource();
-
-    // Constructor co tham so
     IncomeSource(int id, const std::string& name, bool isDeleted = false);
 
     // Getters
@@ -36,11 +42,12 @@ public:
     void setName(const std::string& name);
     void setDeleted(bool deleted);
 
-    // Chuyen doi phuc vu Binary Storage
+    // Binary Record Conversion
     IncomeSourceRecord toRecord(uint32_t nameOffset, uint32_t nameLength) const;
     static IncomeSource fromRecord(const IncomeSourceRecord& record, const std::string& resolvedName);
 
 private:
+    // Private Members
     int id_;
     std::string name_;
     bool isDeleted_;
