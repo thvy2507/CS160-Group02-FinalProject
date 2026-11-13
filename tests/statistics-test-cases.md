@@ -27,7 +27,7 @@ Bank (2) 1000000. Sources: Salary (1), Bonus (2). Categories: Food (1), Rent (2)
 | Single day | 2026-10-31 to 2026-10-31 | 0 / 10000 / -10000 |
 | Income only | 2025-12-31 to 2025-12-31 | 100000 / 0 / 100000 |
 | Invalid range | Start after end | false, output unchanged |
-| Invalid date | 2026-02-30 | false, output unchanged |
+| Invalid date | Date(30, 2, 2026) | Date constructor throws std::invalid_argument before calling StatisticsManager |
 | Missing wallet | ID 999 | false, output unchanged |
 | Empty years | No selected years | false, output unchanged |
 | Empty data | Empty transactions, year 2026 | Annual zero row; empty breakdowns |

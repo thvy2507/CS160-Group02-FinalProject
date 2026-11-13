@@ -14,7 +14,7 @@
 
 int main() {
     std::string output = "unchanged";
-    if (NumberFormatter::formatMoney(1234.0, output) || output != "unchanged") {
+    if (NumberFormatter::formatMoney(1234, output) || output != "unchanged") {
         return 1;
     }
     Dashboard dashboard;

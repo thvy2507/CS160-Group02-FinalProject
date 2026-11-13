@@ -4,17 +4,18 @@
  * @brief Week 1 statistics and dashboard interface skeleton.
  * @note Proposed interfaces; shared model APIs require team review.
  */
+
 #pragma once
 
 class Date;
-class Transaction;
+class TransactionManager;
 class Wallet;
 template <typename T> class DynamicArray;
 
 struct StatisticsResult {
-    double totalIncome = 0.0;
-    double totalExpense = 0.0;
-    double netBalance = 0.0;
+    long long totalIncome = 0;
+    long long totalExpense = 0;
+    long long netBalance = 0;
 };
 
 struct AnnualResult {
@@ -24,21 +25,25 @@ struct AnnualResult {
 
 struct BreakdownResult {
     int id = 0;
-    double amount = 0.0;
+    long long amount = 0;
 };
 
 class StatisticsManager {
 public:
-    // False means unavailable or invalid; output remains unchanged.
-    bool calculateAnnualOverview(const DynamicArray<Transaction>& transactions,
+    // Statistics Operations
+    bool calculateAnnualOverview(const TransactionManager& transactions,
         const DynamicArray<int>& years, DynamicArray<AnnualResult>& result) const;
-    bool calculateExpensesByCategory(const DynamicArray<Transaction>& transactions,
+
+    bool calculateExpensesByCategory(const TransactionManager& transactions,
         const DynamicArray<int>& years, DynamicArray<BreakdownResult>& result) const;
-    bool calculateIncomeBySource(const DynamicArray<Transaction>& transactions,
+
+    bool calculateIncomeBySource(const TransactionManager& transactions,
         const DynamicArray<int>& years, DynamicArray<BreakdownResult>& result) const;
-    bool calculateSummary(const DynamicArray<Transaction>& transactions,
+
+    bool calculateSummary(const TransactionManager& transactions,
         const Date& start, const Date& end, StatisticsResult& result) const;
-    bool calculateWalletSummary(const DynamicArray<Transaction>& transactions,
+
+    bool calculateWalletSummary(const TransactionManager& transactions,
         const Date& start, const Date& end, int walletId,
         const DynamicArray<Wallet>& wallets, StatisticsResult& result) const;
 };
