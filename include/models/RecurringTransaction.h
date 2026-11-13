@@ -19,7 +19,7 @@ const int MAX_DAY_OF_MONTH = 31;
 class RecurringTransaction {
 public:
     RecurringTransaction();
-    RecurringTransaction(int id, TransactionType type, double amount,
+    RecurringTransaction(int id, TransactionType type, long long amount,
                          const std::string& description, int walletId,
                          int sourceOrCategoryId, const Date& startDate,
                          int dayOfMonth);
@@ -29,7 +29,7 @@ public:
     bool hasLastGeneratedDate() const;
     bool isActive() const;
 
-    double getAmount() const;
+    long long getAmount() const;
     int getDayOfMonth() const;
     std::string getDescription() const;
     Date getEndDate() const;
@@ -41,7 +41,7 @@ public:
     int getWalletId() const;
 
     void setActive(bool isActive);
-    void setAmount(double amount);
+    void setAmount(long long amount);
     void setDayOfMonth(int dayOfMonth);
     void setDescription(const std::string& description);
     void setEndDate(const Date& endDate);
@@ -54,7 +54,7 @@ public:
 private:
     int m_id;
     TransactionType m_type;
-    double m_amount;
+    long long m_amount;
     std::string m_description;
     int m_walletId;
     int m_sourceOrCategoryId;

@@ -13,7 +13,7 @@
 class Expense : public Transaction {
 public:
     Expense();
-    Expense(int id, const Date& date, double amount,
+    Expense(int id, const Date& date, long long amount,
             const std::string& description, int walletId, int expenseCategoryId);
     ~Expense() override;
 

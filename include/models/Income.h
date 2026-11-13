@@ -13,7 +13,7 @@
 class Income : public Transaction {
 public:
     Income();
-    Income(int id, const Date& date, double amount,
+    Income(int id, const Date& date, long long amount,
            const std::string& description, int walletId, int incomeSourceId);
     ~Income() override;
 

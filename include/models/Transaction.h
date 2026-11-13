@@ -17,18 +17,18 @@ enum class TransactionType { INCOME, EXPENSE };
 class Transaction {
 public:
     Transaction();
-    Transaction(int id, const Date& date, double amount,
+    Transaction(int id, const Date& date, long long amount,
                 const std::string& description, int walletId);
     virtual ~Transaction();
 
-    double getAmount() const;
+    long long getAmount() const;
     Date getDate() const;
     std::string getDescription() const;
     int getId() const;
     virtual TransactionType getType() const = 0;
     int getWalletId() const;
 
-    void setAmount(double amount);
+    void setAmount(long long amount);
     void setDate(const Date& date);
     void setDescription(const std::string& description);
     void setId(int id);
@@ -37,7 +37,7 @@ public:
 private:
     int m_id;
     Date m_date;
-    double m_amount;
+    long long m_amount;
     std::string m_description;
     int m_walletId;
 };
