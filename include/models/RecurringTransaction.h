@@ -61,8 +61,10 @@ private:
     Date m_startDate;
     bool m_hasEndDate;
     Date m_endDate;
+    // Day of the month (1-31). If a month has fewer days, use its last day
     int m_dayOfMonth;
     bool m_hasLastGeneratedDate;
+    // Latest occurrence already generated. Used to avoid duplicates
     Date m_lastGeneratedDate;
     bool m_isActive;
 };
