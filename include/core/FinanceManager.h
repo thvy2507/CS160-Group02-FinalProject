@@ -25,4 +25,14 @@ private:
     // Menu & Navigation
     void displayMenu() const;
     bool handleChoice(int choice) const;
+
+    void runIncomeMenu() const;
+    void runIncomeSourceMenu() const;
+
+    void runExpenseMenu() const;
+    void runExpenseCategoryMenu() const;
+
+    void runStatisticsMenu() const;
+
+    void runWalletMenu() const;
 };

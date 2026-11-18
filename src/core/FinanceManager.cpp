@@ -12,6 +12,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "ui/StatisticsMenu.h"
+
 // Input Helpers
 bool FinanceManager::readInt(const std::string& prompt, int& value) const {
     std::string line;
@@ -124,9 +126,21 @@ bool FinanceManager::handleChoice(int choice) const {
             return false;
 
         case 1:
+            runIncomeMenu();
+            return true;
+
         case 2:
+            runExpenseMenu();
+            return true;
+
         case 3:
+            runStatisticsMenu();
+            return true;
+
         case 4:
+            runWalletMenu();
+            return true;
+
         case 5:
             std::cout << "This module is not implemented yet.\n";
             return true;
@@ -134,6 +148,192 @@ bool FinanceManager::handleChoice(int choice) const {
         default:
             std::cout << "Invalid option. Please try again.\n";
             return true;
+    }
+}
+
+void FinanceManager::runIncomeMenu() const {
+    while (true) {
+        std::cout << "\n===== INCOME MANAGEMENT =====\n";
+        std::cout << "1. Add Income\n";
+        std::cout << "2. View Income\n";
+        std::cout << "3. Edit Income\n";
+        std::cout << "4. Delete Income\n";
+        std::cout << "5. Manage Income Sources\n";
+        std::cout << "0. Back\n";
+
+        int choice;
+
+        if (!readInt("Choose an option: ", choice)) {
+            return;
+        }
+
+        switch (choice) {
+            case 0:
+                return;
+
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                std::cout << "This operation is not implemented yet.\n";
+                break;
+
+            case 5:
+                runIncomeSourceMenu();
+                break;
+
+            default:
+                std::cout << "Invalid option. Please try again.\n";
+        }
+    }
+}
+
+void FinanceManager::runIncomeSourceMenu() const {
+    while (true) {
+        std::cout << "\n===== INCOME SOURCE MANAGEMENT =====\n";
+        std::cout << "1. Add Income Source\n";
+        std::cout << "2. View Income Sources\n";
+        std::cout << "3. Edit Income Source\n";
+        std::cout << "4. Delete Income Source\n";
+        std::cout << "0. Back\n";
+
+        int choice;
+
+        if (!readInt("Choose an option: ", choice)) {
+            return;
+        }
+
+        switch (choice) {
+            case 0:
+                return;
+
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                std::cout << "This operation is not implemented yet.\n";
+                break;
+
+            default:
+                std::cout << "Invalid option. Please try again.\n";
+        }
+    }
+}
+
+void FinanceManager::runExpenseMenu() const {
+    while (true) {
+        std::cout << "\n===== EXPENSE MANAGEMENT =====\n";
+        std::cout << "1. Add Expense\n";
+        std::cout << "2. View Expenses\n";
+        std::cout << "3. Edit Expense\n";
+        std::cout << "4. Delete Expense\n";
+        std::cout << "5. Manage Expense Categories\n";
+        std::cout << "0. Back\n";
+
+        int choice;
+
+        if (!readInt("Choose an option: ", choice)) {
+            return;
+        }
+
+        switch (choice) {
+            case 0:
+                return;
+
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                std::cout << "This operation is not implemented yet.\n";
+                break;
+
+            case 5:
+                runExpenseCategoryMenu();
+                break;
+
+            default:
+                std::cout << "Invalid option. Please try again.\n";
+        }
+    }
+}
+
+void FinanceManager::runExpenseCategoryMenu() const {
+    while (true) {
+        std::cout << "\n===== EXPENSE CATEGORY MANAGEMENT =====\n";
+        std::cout << "1. Add Expense Category\n";
+        std::cout << "2. View Expense Categories\n";
+        std::cout << "3. Edit Expense Category\n";
+        std::cout << "4. Delete Expense Category\n";
+        std::cout << "0. Back\n";
+
+        int choice;
+
+        if (!readInt("Choose an option: ", choice)) {
+            return;
+        }
+
+        switch (choice) {
+            case 0:
+                return;
+
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                std::cout << "This operation is not implemented yet.\n";
+                break;
+
+            default:
+                std::cout << "Invalid option. Please try again.\n";
+        }
+    }
+}
+
+void FinanceManager::runStatisticsMenu() const {
+    StatisticsMenu menu;
+
+    while (true) {
+        menu.show();
+
+        int choice = menu.readChoice();
+
+        if (choice == 0) {
+            return;
+        }
+
+        std::cout << "This report is not implemented yet.\n";
+    }
+}
+
+void FinanceManager::runWalletMenu() const {
+    while (true) {
+        std::cout << "\n===== WALLET MANAGEMENT =====\n";
+        std::cout << "1. Add Wallet\n";
+        std::cout << "2. View Wallets\n";
+        std::cout << "3. Edit Wallet\n";
+        std::cout << "4. Delete Wallet\n";
+        std::cout << "0. Back\n";
+
+        int choice;
+
+        if (!readInt("Choose an option: ", choice)) {
+            return;
+        }
+
+        switch (choice) {
+            case 0:
+                return;
+
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                std::cout << "This operation is not implemented yet.\n";
+                break;
+
+            default:
+                std::cout << "Invalid option. Please try again.\n";
+        }
     }
 }
 
