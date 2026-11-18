@@ -37,5 +37,37 @@ int main() {
     }
 
     std::cout << "PASS: empty transaction list\n";
+
+    result.totalIncome = 100;
+    result.totalExpense = 50;
+    result.netBalance = 50;
+
+    success = statistics.calculateSummary(
+        transactions, Date(30, 11, 2026), Date(1, 11, 2026), result
+    );
+
+    if (success || result.totalIncome != 100
+        || result.totalExpense != 50 || result.netBalance != 50) {
+        std::cout << "FAIL: reversed date range\n";
+        return 1;
+    }
+
+    std::cout << "PASS: reversed date range\n";
+    
+    result.totalIncome = 100;
+    result.totalExpense = 50;
+    result.netBalance = 50;
+
+    success = statistics.calculateSummary(
+        transactions, Date(1, 11, 2026), Date(31, 11, 2026), result
+    );
+
+    if (success || result.totalIncome != 100
+        || result.totalExpense != 50 || result.netBalance != 50) {
+        std::cout << "FAIL: invalid end date\n";
+        return 1;
+    }
+
+    std::cout << "PASS: invalid end date\n";
     return 0;
 }
