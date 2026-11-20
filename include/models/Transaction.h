@@ -2,7 +2,6 @@
  * @file Transaction.h
  * @author TV3
  * @brief Base model for a single income or expense transaction
- * @note Week 1 - interface only
  */
 
 #ifndef TRANSACTION_H
@@ -27,18 +26,18 @@ public:
     virtual ~Transaction();
 
     // Getters
-    long long getAmount() const;
-    Date getDate() const;
-    std::string getDescription() const;
     int getId() const;
-    virtual TransactionType getType() const = 0;
+    Date getDate() const;
+    long long getAmount() const;
+    std::string getDescription() const;
     int getWalletId() const;
+    virtual TransactionType getType() const = 0;
 
     // Setters
-    void setAmount(long long amount);
-    void setDate(const Date& date);
-    void setDescription(const std::string& description);
     void setId(int id);
+    void setDate(const Date& date);
+    void setAmount(long long amount);
+    void setDescription(const std::string& description);
     void setWalletId(int walletId);
 
 private:

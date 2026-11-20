@@ -1,8 +1,9 @@
 /**
  * @file StatisticsManager.h
  * @author TV4
- * @brief Week 1 statistics and dashboard interface skeleton.
- * @note Proposed interfaces; shared model APIs require team review.
+ * @brief Provides financial reports and statistics.
+ * @note Sprint 2 implements date-range summaries.
+ * Other reports are deferred to later sprints.
  */
 
 #pragma once
@@ -31,19 +32,19 @@ struct BreakdownResult {
 class StatisticsManager {
 public:
     // Statistics Operations
-    bool calculateAnnualOverview(const TransactionManager& transactions,
-        const DynamicArray<int>& years, DynamicArray<AnnualResult>& result) const;
-
-    bool calculateExpensesByCategory(const TransactionManager& transactions,
-        const DynamicArray<int>& years, DynamicArray<BreakdownResult>& result) const;
-
-    bool calculateIncomeBySource(const TransactionManager& transactions,
-        const DynamicArray<int>& years, DynamicArray<BreakdownResult>& result) const;
-
     bool calculateSummary(const TransactionManager& transactions,
         const Date& start, const Date& end, StatisticsResult& result) const;
 
     bool calculateWalletSummary(const TransactionManager& transactions,
         const Date& start, const Date& end, int walletId,
         const DynamicArray<Wallet>& wallets, StatisticsResult& result) const;
+
+    bool calculateAnnualOverview(const TransactionManager& transactions,
+        const DynamicArray<int>& years, DynamicArray<AnnualResult>& result) const;
+
+    bool calculateIncomeBySource(const TransactionManager& transactions,
+        const DynamicArray<int>& years, DynamicArray<BreakdownResult>& result) const;
+
+    bool calculateExpensesByCategory(const TransactionManager& transactions,
+        const DynamicArray<int>& years, DynamicArray<BreakdownResult>& result) const;
 };

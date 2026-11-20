@@ -1,7 +1,7 @@
 /**
  * @file ExpenseCategory.h
  * @author TV2 (Khoi)
- * @brief Defines the expense category model and binary record.
+ * @brief Declares the expense category model and binary record structure.
  */
 
 #ifndef MODELS_EXPENSE_CATEGORY_H
@@ -11,8 +11,6 @@
 #include <string>
 #include <type_traits>
 
-// Fixed-size record for binary storage.
-// Category names are stored separately in the Name Pool.
 struct ExpenseCategoryRecord {
     int32_t id;
     uint32_t nameOffset;
@@ -32,14 +30,16 @@ public:
     ExpenseCategory();
     ExpenseCategory(int id, const std::string& name, bool isDeleted = false);
 
+    // Validation
+    bool isValid() const;
+
     // Getters
     int getId() const;
     const std::string& getName() const;
     bool isDeleted() const;
-    bool isValid() const;
 
     // Setters
-    void setName(const std::string& name);
+    bool setName(const std::string& name);
     void setDeleted(bool deleted);
 
     // Binary Record Conversion
