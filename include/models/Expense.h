@@ -2,7 +2,6 @@
  * @file Expense.h
  * @author TV3
  * @brief Expense transaction linked to an expense category
- * @note Week 1 - interface only
  */
 
 #ifndef EXPENSE_H
