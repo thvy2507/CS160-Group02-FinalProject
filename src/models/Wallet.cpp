@@ -6,6 +6,8 @@
 
 #include "models/Wallet.h"
 
+#include <limits>
+
 Wallet::Wallet()
     : m_id(INVALID_ID),
       m_name(""),
@@ -54,7 +56,13 @@ void Wallet::setBalance(Money balance) { m_balance = balance; }
 void Wallet::setDeleted(bool deleted) { m_isDeleted = deleted; }
 
 bool Wallet::deposit(Money amount) {
-    if (amount <= 0 || m_isDeleted) return false;
+    if (amount <= 0 || m_isDeleted) {
+        return false;
+    }
+
+    if (m_balance > std::numeric_limits<Money>::max() - amount) {
+        return false;
+    }
 
     m_balance += amount;
     return true;

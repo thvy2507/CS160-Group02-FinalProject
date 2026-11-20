@@ -7,11 +7,16 @@
 #include "managers/WalletManager.h"
 
 #include <iostream>
+#include <limits>
 
 WalletManager::WalletManager() : m_wallets(), m_nextId(1) {}
 
 int WalletManager::addWallet(const std::string& name, Money initialBalance) {
     if (name.empty() || initialBalance < 0 || findIndexByName(name) != -1) {
+        return Wallet::INVALID_ID;
+    }
+
+    if (getTotalBalance() > std::numeric_limits<Money>::max() - initialBalance) {
         return Wallet::INVALID_ID;
     }
 
@@ -131,7 +136,14 @@ Money WalletManager::getTotalBalance() const {
 
 bool WalletManager::deposit(int walletId, Money amount) {
     Wallet* wallet = getWalletById(walletId);
-    if (wallet == nullptr) return false;
+
+    if (!wallet || amount <= 0) {
+        return false;
+    }
+
+    if (getTotalBalance() > std::numeric_limits<Money>::max() - amount) {
+        return false;
+    }
 
     return wallet->deposit(amount);
 }
