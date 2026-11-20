@@ -59,14 +59,13 @@ The following rules require confirmation from TV1:
 - Statistics Menu option 0 returns to the main menu.
 - Main Menu option 0 exits the application.
 - Full Dashboard rendering remains scheduled for a later sprint.
-
 ### Build and verification status
 
-- Link the statistics, UI, transaction, master-data, and Date implementations
-  required by the application and statistics tests.
-- Build tests/test_statistics.cpp as a separate executable.
-- calculateSummary and the Statistics Menu have passed syntax checks.
-- Statistics tests have passed syntax checks.
-- Runtime tests and application integration are pending.
-- Confirm transaction ID assignment with TV3. Sample tests currently pass
-  ID 0 and expect TransactionManager to assign the stored transaction IDs.
+- Master data, transaction, statistics, and UI modules are linked
+  through the root CMakeLists.txt.
+- Full application build passed on macOS.
+- All 8 statistics test cases passed.
+- Date input format is consistent with Core (DD/MM/YYYY).
+- Transaction ID assignment has been verified.
+- FinanceManager integration is pending.
+- Standalone Statistics Menu interaction tests passed.
