@@ -7,7 +7,7 @@ int ExpenseCategoryManager::addExpenseCategory(const std::string& name) {
     if (name.empty() || findIndexByName(name) != -1) return ExpenseCategory::INVALID_ID;
     int assignedId = nextId_++;
     ExpenseCategory newCat(assignedId, name);
-    categories_.pushBack(newCat);
+    categories_.add(newCat);
     return assignedId;
 }
 

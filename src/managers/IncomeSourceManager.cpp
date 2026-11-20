@@ -7,7 +7,7 @@ int IncomeSourceManager::addIncomeSource(const std::string& name) {
     if (name.empty() || findIndexByName(name) != -1) return IncomeSource::INVALID_ID;
     int assignedId = nextId_++;
     IncomeSource newSource(assignedId, name);
-    sources_.pushBack(newSource);
+    sources_.add(newSource);
     return assignedId;
 }
 

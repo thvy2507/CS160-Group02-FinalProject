@@ -10,7 +10,7 @@ int WalletManager::addWallet(const std::string& name, Money initialBalance) {
     }
     int assignedId = nextId_++;
     Wallet newWallet(assignedId, name, initialBalance);
-    wallets_.pushBack(newWallet);
+    wallets_.add(newWallet);
     return assignedId;
 }
 
