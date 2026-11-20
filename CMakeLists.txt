@@ -1,16 +1,33 @@
-
 cmake_minimum_required(VERSION 3.15)
 
 project(PersonalFinanceManager LANGUAGES CXX)
 
 add_executable(PersonalFinanceManager
     src/main.cpp
+
+    # Core
     src/core/FinanceManager.cpp
     src/core/Date.cpp
 
+    # Models
+    src/models/Wallet.cpp
+    src/models/IncomeSource.cpp
+    src/models/ExpenseCategory.cpp
+    src/models/Transaction.cpp
+    src/models/Income.cpp
+    src/models/Expense.cpp
+
+    # Managers
+    src/managers/WalletManager.cpp
+    src/managers/IncomeSourceManager.cpp
+    src/managers/ExpenseCategoryManager.cpp
+    src/managers/TransactionManager.cpp
+
+    # Statistics
     src/statistics/StatisticsManager.cpp
     src/statistics/NumberFormatter.cpp
 
+    # UI
     src/ui/Dashboard.cpp
     src/ui/StatisticsMenu.cpp
 )
