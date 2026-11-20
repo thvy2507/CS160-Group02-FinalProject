@@ -1,13 +1,14 @@
 /**
  * @file IncomeSourceManager.h
  * @author TV2 (Khoi)
- * @brief Manages income sources.
+ * @brief Declares income source management operations.
  */
 
 #ifndef MANAGERS_INCOME_SOURCE_MANAGER_H
 #define MANAGERS_INCOME_SOURCE_MANAGER_H
 
 #include <string>
+
 #include "core/DynamicArray.h"
 #include "models/IncomeSource.h"
 
@@ -19,9 +20,9 @@ public:
 
     // CRUD Operations
     int addIncomeSource(const std::string& name);
+    void viewAllIncomeSources() const;
     bool editIncomeSource(int sourceId, const std::string& newName);
     bool deleteIncomeSource(int sourceId);
-    void viewAllIncomeSources() const;
 
     // Search & Access
     bool exists(int sourceId) const;
@@ -35,7 +36,7 @@ public:
     const DynamicArray<IncomeSource>& getAllIncomeSources() const;
     int getActiveCount() const;
 
-    // Binary Persistence
+    // Binary File Operations
     bool loadFromBinary(const std::string& recordFilePath, const std::string& namePoolPath);
     bool saveToBinary(const std::string& recordFilePath, const std::string& namePoolPath) const;
 

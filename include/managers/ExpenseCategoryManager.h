@@ -1,13 +1,14 @@
 /**
  * @file ExpenseCategoryManager.h
  * @author TV2 (Khoi)
- * @brief Manages expense categories.
+ * @brief Declares expense category management operations.
  */
 
 #ifndef MANAGERS_EXPENSE_CATEGORY_MANAGER_H
 #define MANAGERS_EXPENSE_CATEGORY_MANAGER_H
 
 #include <string>
+
 #include "core/DynamicArray.h"
 #include "models/ExpenseCategory.h"
 
@@ -19,9 +20,9 @@ public:
 
     // CRUD Operations
     int addExpenseCategory(const std::string& name);
+    void viewAllExpenseCategories() const;
     bool editExpenseCategory(int categoryId, const std::string& newName);
     bool deleteExpenseCategory(int categoryId);
-    void viewAllExpenseCategories() const;
 
     // Search & Access
     bool exists(int categoryId) const;
@@ -35,7 +36,7 @@ public:
     const DynamicArray<ExpenseCategory>& getAllExpenseCategories() const;
     int getActiveCount() const;
 
-    // Binary Persistence
+    // Binary File Operations
     bool loadFromBinary(const std::string& recordFilePath, const std::string& namePoolPath);
     bool saveToBinary(const std::string& recordFilePath, const std::string& namePoolPath) const;
 
