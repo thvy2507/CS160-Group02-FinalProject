@@ -4,10 +4,8 @@
  * @brief Tests date-range summaries and read-only transaction access.
  */
 
-#include "statistics/StatisticsManager.h"
-#include <stdexcept>
-
 #include <iostream>
+#include <stdexcept>
 
 #include "core/Date.h"
 #include "managers/ExpenseCategoryManager.h"
@@ -16,6 +14,7 @@
 #include "managers/WalletManager.h"
 #include "models/Expense.h"
 #include "models/Income.h"
+#include "statistics/StatisticsManager.h"
 
 bool checkSummary(
     const StatisticsManager& statistics,

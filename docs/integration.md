@@ -39,7 +39,7 @@ menu.run(transactionManager);
 `transactionManager` represents the existing manager used to add and store
 the application's transactions. Use that same instance for reporting.
 
-- Option 1 requests the start and end dates as `day month year`.
+- Option 1 requests the start and end dates in `DD/MM/YYYY` format.
 - Both date boundaries are included.
 - A successful report displays Income, Expense, and Net Balance in VND.
 - Invalid date input prompts again.

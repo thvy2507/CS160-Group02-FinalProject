@@ -1,34 +1,20 @@
 /**
  * @file StatisticsManager.cpp
  * @author TV4
- * @brief Week 1 statistics and dashboard interface skeleton.
- * @note Proposed interfaces; shared model APIs require team review.
+ * @brief Provides financial reports and statistics.
+ * @note Sprint 2 implements date-range summaries.
+ * Other reports are deferred to later sprints.
  */
 
 #include "statistics/StatisticsManager.h"
+
+#include <limits>
+
 #include "core/Date.h"
 #include "managers/TransactionManager.h"
 #include "models/Transaction.h"
-#include <limits>
 
-bool StatisticsManager::calculateAnnualOverview(
-    const TransactionManager&, const DynamicArray<int>&,
-    DynamicArray<AnnualResult>&) const {
-    return false;
-}
-
-bool StatisticsManager::calculateExpensesByCategory(
-    const TransactionManager&, const DynamicArray<int>&,
-    DynamicArray<BreakdownResult>&) const {
-    return false;
-}
-
-bool StatisticsManager::calculateIncomeBySource(
-    const TransactionManager&, const DynamicArray<int>&,
-    DynamicArray<BreakdownResult>&) const {
-    return false;
-}
-
+// Statistics Operations
 bool StatisticsManager::calculateSummary(
     const TransactionManager& transactions,
     const Date& start, const Date& end,
@@ -79,5 +65,23 @@ bool StatisticsManager::calculateSummary(
 bool StatisticsManager::calculateWalletSummary(
     const TransactionManager&, const Date&, const Date&, int,
     const DynamicArray<Wallet>&, StatisticsResult&) const {
+    return false;
+}
+
+bool StatisticsManager::calculateAnnualOverview(
+    const TransactionManager&, const DynamicArray<int>&,
+    DynamicArray<AnnualResult>&) const {
+    return false;
+}
+
+bool StatisticsManager::calculateIncomeBySource(
+    const TransactionManager&, const DynamicArray<int>&,
+    DynamicArray<BreakdownResult>&) const {
+    return false;
+}
+
+bool StatisticsManager::calculateExpensesByCategory(
+    const TransactionManager&, const DynamicArray<int>&,
+    DynamicArray<BreakdownResult>&) const {
     return false;
 }

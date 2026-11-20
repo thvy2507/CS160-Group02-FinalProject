@@ -3,6 +3,7 @@
  * @author TV4
  * @brief Handles date-range reports and statistics menu navigation.
  */
+
 #include "ui/StatisticsMenu.h"
 
 #include <iostream>
@@ -77,26 +78,24 @@ bool StatisticsMenu::readDate(const char* prompt, Date& date) const {
         }
 
         std::istringstream input(line);
-        int day;
-        int month;
-        int year;
-        char extra;
 
-        if ((input >> day >> month >> year) && !(input >> extra)) {
+        int day, month, year;
+        char separator1, separator2, extra;
+
+        if ((input >> day >> separator1 >> month >> separator2 >> year)
+            && separator1 == '/' && separator2 == '/'
+            && !(input >> extra)) {
+
             try {
-                Date candidate(day, month, year);
-
-                if (candidate.isValid()) {
-                    date = candidate;
-                    return true;
-                }
+                date = Date(day, month, year);
+                return true;
             } catch (const std::invalid_argument&) {
-                // Continue to the validation message and request another date.
+                std::cout << "Invalid date.\n";
+                continue;
             }
         }
 
-        std::cout << "Invalid date. Enter day month year, for example "
-                  << "1 11 2026.\n";
+        std::cout << "Invalid format. Please use DD/MM/YYYY.\n";
     }
 }
 
@@ -105,11 +104,11 @@ bool StatisticsMenu::showDateSummary(
     Date start;
     Date end;
 
-    if (!readDate("Start date (day month year): ", start)) {
+    if (!readDate("Start date (DD/MM/YYYY): ", start)) {
         return false;
     }
 
-    if (!readDate("End date (day month year): ", end)) {
+    if (!readDate("End date (DD/MM/YYYY): ", end)) {
         return false;
     }
 
