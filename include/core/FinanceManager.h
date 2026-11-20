@@ -19,6 +19,7 @@ public:
     // Constructors
     FinanceManager();
 
+    // Application Control
     void run();
 
 private:

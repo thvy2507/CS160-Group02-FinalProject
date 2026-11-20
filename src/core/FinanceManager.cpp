@@ -1,7 +1,8 @@
 /**
  * @file FinanceManager.cpp
  * @author TV1 (Vy)
- * @brief Implements the main console menu and navigation skeleton.
+ * @brief Implements application navigation, input validation,
+ *        and integration of financial management modules.
  */
 
 #include "core/FinanceManager.h"
@@ -18,6 +19,23 @@ FinanceManager::FinanceManager()
     : m_transactionManager(&m_walletManager,
                            &m_incomeSourceManager,
                            &m_expenseCategoryManager) {}
+
+// Application Control
+void FinanceManager::run() {
+    while (true) {
+        displayMenu();
+
+        int choice;
+
+        if (!readInt("Choose an option: ", choice)) {
+            return;
+        }
+
+        if (!handleChoice(choice)) {
+            return;
+        }
+    }
+}
 
 // Input Helpers
 bool FinanceManager::readInt(const std::string& prompt, int& value) const {
@@ -541,6 +559,7 @@ void FinanceManager::runWalletMenu() {
 }
 
 // Transaction Operations
+// Return false on end-of-input; otherwise continue menu navigation.
 bool FinanceManager::addIncome() {
     if (m_walletManager.getActiveWalletCount() == 0) {
         std::cout << "Please create a wallet first.\n";
@@ -704,21 +723,5 @@ void FinanceManager::viewTransactions(TransactionType type) const {
 
     if (!found) {
         std::cout << "No transactions found.\n";
-    }
-}
-
-void FinanceManager::run() {
-    while (true) {
-        displayMenu();
-
-        int choice;
-
-        if (!readInt("Choose an option: ", choice)) {
-            return;
-        }
-
-        if (!handleChoice(choice)) {
-            return;
-        }
     }
 }
