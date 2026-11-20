@@ -8,6 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <stdexcept>
 
 #include "core/Date.h"
 #include "statistics/StatisticsManager.h"
@@ -82,11 +83,15 @@ bool StatisticsMenu::readDate(const char* prompt, Date& date) const {
         char extra;
 
         if ((input >> day >> month >> year) && !(input >> extra)) {
-            Date candidate(day, month, year);
+            try {
+                Date candidate(day, month, year);
 
-            if (candidate.isValid()) {
-                date = candidate;
-                return true;
+                if (candidate.isValid()) {
+                    date = candidate;
+                    return true;
+                }
+            } catch (const std::invalid_argument&) {
+                // Continue to the validation message and request another date.
             }
         }
 

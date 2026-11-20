@@ -5,6 +5,7 @@
  */
 
 #include "statistics/StatisticsManager.h"
+#include <stdexcept>
 
 #include <iostream>
 
@@ -62,9 +63,7 @@ int main() {
     std::cout << "PASS: empty transaction list\n";
 
     Date invalidRanges[][2] = {
-        {Date(30, 11, 2026), Date(1, 11, 2026)},
-        {Date(31, 11, 2026), Date(30, 11, 2026)},
-        {Date(1, 11, 2026), Date(31, 11, 2026)}
+        {Date(30, 11, 2026), Date(1, 11, 2026)}
     };
 
     for (const auto& range : invalidRanges) {
@@ -83,6 +82,22 @@ int main() {
         }
     }
     std::cout << "PASS: invalid ranges preserve output\n";
+
+    bool invalidDateRejected = false;
+
+    try {
+        Date invalidDate(31, 11, 2026);
+        (void)invalidDate;
+    } catch (const std::invalid_argument&) {
+        invalidDateRejected = true;
+    }
+
+    if (!invalidDateRejected) {
+        std::cout << "FAIL: invalid date construction\n";
+        return 1;
+    }
+
+    std::cout << "PASS: invalid date construction rejected\n";
 
     int walletId = wallets.addWallet("Cash", 1000000);
     int sourceId = sources.addIncomeSource("Salary");
