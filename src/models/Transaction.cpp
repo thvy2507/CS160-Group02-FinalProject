@@ -26,20 +26,20 @@ Transaction::Transaction(int id, const Date& date, long long amount,
 Transaction::~Transaction() {}
 
 // Getters
-long long Transaction::getAmount() const {
-    return m_amount;
+int Transaction::getId() const {
+    return m_id;
 }
 
 Date Transaction::getDate() const {
     return m_date;
 }
 
-std::string Transaction::getDescription() const {
-    return m_description;
+long long Transaction::getAmount() const {
+    return m_amount;
 }
 
-int Transaction::getId() const {
-    return m_id;
+std::string Transaction::getDescription() const {
+    return m_description;
 }
 
 int Transaction::getWalletId() const {
@@ -47,20 +47,20 @@ int Transaction::getWalletId() const {
 }
 
 // Setters
-void Transaction::setAmount(long long amount) {
-    m_amount = amount;
+void Transaction::setId(int id) {
+    m_id = id;
 }
 
 void Transaction::setDate(const Date& date) {
     m_date = date;
 }
 
-void Transaction::setDescription(const std::string& description) {
-    m_description = description;
+void Transaction::setAmount(long long amount) {
+    m_amount = amount;
 }
 
-void Transaction::setId(int id) {
-    m_id = id;
+void Transaction::setDescription(const std::string& description) {
+    m_description = description;
 }
 
 void Transaction::setWalletId(int walletId) {

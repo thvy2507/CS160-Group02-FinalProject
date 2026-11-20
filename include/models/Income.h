@@ -2,7 +2,6 @@
  * @file Income.h
  * @author TV3
  * @brief Income transaction linked to an income source
- * @note Week 1 - interface only
  */
 
 #ifndef INCOME_H

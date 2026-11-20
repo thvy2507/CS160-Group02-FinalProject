@@ -66,6 +66,30 @@ TransactionManager::~TransactionManager() {
 }
 
 // CRUD Operations
+bool TransactionManager::addIncome(const Income& income) {
+    if (!hasValidCommonFields(income, m_walletManager)) {
+        return false;
+    }
+    if (m_incomeSourceManager == nullptr ||
+        !m_incomeSourceManager->exists(income.getIncomeSourceId())) {
+        return false;
+    }
+
+    Income* record = new Income(m_nextId, income.getDate(), income.getAmount(),
+                                income.getDescription(), income.getWalletId(),
+                                income.getIncomeSourceId());
+    m_transactions.add(record);
+
+    if (!m_walletManager->deposit(income.getWalletId(), income.getAmount())) {
+        m_transactions.remove(m_transactions.size() - 1);
+        delete record;
+        return false;
+    }
+
+    ++m_nextId;
+    return true;
+}
+
 bool TransactionManager::addExpense(const Expense& expense) {
     if (!hasValidCommonFields(expense, m_walletManager)) {
         return false;
@@ -82,30 +106,6 @@ bool TransactionManager::addExpense(const Expense& expense) {
 
     // withdraw() rejects insufficient funds, so the balance is unchanged on failure
     if (!m_walletManager->withdraw(expense.getWalletId(), expense.getAmount())) {
-        m_transactions.remove(m_transactions.size() - 1);
-        delete record;
-        return false;
-    }
-
-    ++m_nextId;
-    return true;
-}
-
-bool TransactionManager::addIncome(const Income& income) {
-    if (!hasValidCommonFields(income, m_walletManager)) {
-        return false;
-    }
-    if (m_incomeSourceManager == nullptr ||
-        !m_incomeSourceManager->exists(income.getIncomeSourceId())) {
-        return false;
-    }
-
-    Income* record = new Income(m_nextId, income.getDate(), income.getAmount(),
-                                income.getDescription(), income.getWalletId(),
-                                income.getIncomeSourceId());
-    m_transactions.add(record);
-
-    if (!m_walletManager->deposit(income.getWalletId(), income.getAmount())) {
         m_transactions.remove(m_transactions.size() - 1);
         delete record;
         return false;

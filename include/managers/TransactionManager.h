@@ -2,8 +2,9 @@
  * @file TransactionManager.h
  * @author TV3
  * @brief Interface for managing income and expense transactions
- * @note Week 1 - declarations only. Validation and balance updates go through WalletManager
- */
+ * @note Sprint 2 supports adding, viewing and searching transactions.
+ * Edit and delete operations are deferred to a later sprint.
+  */
 
 #ifndef TRANSACTION_MANAGER_H
 #define TRANSACTION_MANAGER_H
@@ -26,13 +27,13 @@ public:
     ~TransactionManager();
 
     // CRUD Operations
-    bool addExpense(const Expense& expense);
     bool addIncome(const Income& income);
-    bool deleteTransaction(int id);
-    bool editExpense(int id, const Expense& updated);
-    bool editIncome(int id, const Income& updated);
+    bool addExpense(const Expense& expense);
     void viewAllTransactions() const;
     bool viewTransaction(int id) const;
+    bool editIncome(int id, const Income& updated);
+    bool editExpense(int id, const Expense& updated);
+    bool deleteTransaction(int id);
 
     // Search & Access
     const Transaction* getTransactionAt(int index) const;
