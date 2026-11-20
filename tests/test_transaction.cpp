@@ -6,6 +6,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <limits>
 
 #include "core/Date.h"
 #include "managers/ExpenseCategoryManager.h"
@@ -198,6 +199,41 @@ void testViewTransactions(const TestContext& context) {
     std::cout << "PASS: View transactions\n";
 }
 
+void testBalanceOverflow() {
+    const Money MAX_BALANCE = std::numeric_limits<Money>::max();
+
+    Wallet wallet(1, "Limit", MAX_BALANCE);
+
+    assert(!wallet.deposit(1));
+    assert(wallet.getBalance() == MAX_BALANCE);
+
+    WalletManager wallets;
+    IncomeSourceManager sources;
+    ExpenseCategoryManager categories;
+    TransactionManager transactions(&wallets, &sources, &categories);
+
+    int cashId = wallets.addWallet("Cash", MAX_BALANCE - 1);
+    int bankId = wallets.addWallet("Bank", 1);
+    int sourceId = sources.addIncomeSource("Salary");
+
+    assert(cashId > 0);
+    assert(bankId > 0);
+    assert(sourceId > 0);
+    assert(wallets.getTotalBalance() == MAX_BALANCE);
+
+    assert(wallets.addWallet("Overflow", 1) == Wallet::INVALID_ID);
+    assert(wallets.getActiveWalletCount() == 2);
+
+    Income income(0, Date(20, 11, 2026), 1, "Overflow income", cashId, sourceId);
+
+    assert(!transactions.addIncome(income));
+    assert(transactions.getTransactionCount() == 0);
+    assert(wallets.getWalletBalance(cashId) == MAX_BALANCE - 1);
+    assert(wallets.getTotalBalance() == MAX_BALANCE);
+
+    std::cout << "PASS: Prevent wallet balance overflow\n";
+}
+
 int main() {
     std::cout << "===== TRANSACTION TESTS =====\n\n";
 
@@ -212,6 +248,7 @@ int main() {
     testDeletedReferences(context);
     testSequentialIds(context);
     testViewTransactions(context);
+    testBalanceOverflow();
 
     std::cout << "\nAll transaction tests passed!\n";
 
