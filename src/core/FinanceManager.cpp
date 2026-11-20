@@ -1,4 +1,3 @@
-
 /**
  * @file FinanceManager.cpp
  * @author TV1 (Vy)
@@ -435,18 +434,7 @@ void FinanceManager::runExpenseCategoryMenu() {
 
 void FinanceManager::runStatisticsMenu() const {
     StatisticsMenu menu;
-
-    while (true) {
-        menu.show();
-
-        int choice = menu.readChoice();
-
-        if (choice == 0) {
-            return;
-        }
-
-        std::cout << "This report is not implemented yet.\n";
-    }
+    menu.run(m_transactionManager);
 }
 
 void FinanceManager::runWalletMenu() {
