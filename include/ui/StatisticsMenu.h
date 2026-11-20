@@ -1,14 +1,22 @@
 /**
  * @file StatisticsMenu.h
  * @author TV4
- * @brief Week 1 statistics and dashboard interface skeleton.
- * @note Proposed interfaces; shared model APIs require team review.
+ * @brief Declares date-range reporting and statistics navigation.
  */
 #pragma once
 
+class Date;
+class TransactionManager;
+
 class StatisticsMenu {
 public:
-    // Navigation only: FinanceManager supplies data and dispatches reports.
-    int readChoice() const;
+    // Menu & Navigation
     void show() const;
+    int readChoice() const;
+    void run(const TransactionManager& transactions) const;
+
+private:
+    // Private Helpers
+    bool readDate(const char* prompt, Date& date) const;
+    bool showDateSummary(const TransactionManager& transactions) const;
 };
