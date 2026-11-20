@@ -14,6 +14,12 @@
 
 #include "ui/StatisticsMenu.h"
 
+// Constructors
+FinanceManager::FinanceManager()
+    : m_transactionManager(&m_walletManager,
+                           &m_incomeSourceManager,
+                           &m_expenseCategoryManager) {}
+
 // Input Helpers
 bool FinanceManager::readInt(const std::string& prompt, int& value) const {
     std::string line;
@@ -172,7 +178,15 @@ void FinanceManager::runIncomeMenu() {
                 return;
 
             case 1:
+                if (!addIncome()) {
+                    return;
+                }
+                break;
+
             case 2:
+                viewTransactions(TransactionType::INCOME);
+                break;
+
             case 3:
             case 4:
                 std::cout << "This operation is not implemented yet.\n";
@@ -302,7 +316,15 @@ void FinanceManager::runExpenseMenu() {
                 return;
 
             case 1:
+                if (!addExpense()) {
+                    return;
+                }
+                break;
+
             case 2:
+                viewTransactions(TransactionType::EXPENSE);
+                break;
+
             case 3:
             case 4:
                 std::cout << "This operation is not implemented yet.\n";
@@ -527,6 +549,173 @@ void FinanceManager::runWalletMenu() {
             default:
                 std::cout << "Invalid option. Please try again.\n";
         }
+    }
+}
+
+// Transaction Operations
+bool FinanceManager::addIncome() {
+    if (m_walletManager.getActiveWalletCount() == 0) {
+        std::cout << "Please create a wallet first.\n";
+        return true;
+    }
+
+    if (m_incomeSourceManager.getActiveCount() == 0) {
+        std::cout << "Please create an income source first.\n";
+        return true;
+    }
+
+    int walletId;
+    int sourceId;
+    long long amount;
+    Date date;
+    std::string description;
+
+    m_walletManager.viewAllWallets();
+
+    if (!readInt("Wallet ID: ", walletId)) {
+        return false;
+    }
+
+    if (!m_walletManager.exists(walletId)) {
+        std::cout << "Wallet not found.\n";
+        return true;
+    }
+
+    m_incomeSourceManager.viewAllIncomeSources();
+
+    if (!readInt("Income source ID: ", sourceId)) {
+        return false;
+    }
+
+    if (!m_incomeSourceManager.exists(sourceId)) {
+        std::cout << "Income source not found.\n";
+        return true;
+    }
+
+    if (!readMoney("Amount (VND): ", amount)) {
+        return false;
+    }
+
+    if (amount <= 0) {
+        std::cout << "Amount must be greater than zero.\n";
+        return true;
+    }
+
+    if (!readDate("Date (DD/MM/YYYY): ", date)) {
+        return false;
+    }
+
+    if (!readText("Description: ", description, true)) {
+        return false;
+    }
+
+    Income income(Transaction::INVALID_ID, date, amount,
+                  description, walletId, sourceId);
+
+    if (m_transactionManager.addIncome(income)) {
+        std::cout << "Income added successfully.\n";
+        std::cout << "Current wallet balance: " << m_walletManager.getWalletBalance(walletId) << " VND\n";
+    } else {
+        std::cout << "Unable to add income.\n";
+    }
+
+    return true;
+}
+
+bool FinanceManager::addExpense() {
+    if (m_walletManager.getActiveWalletCount() == 0) {
+        std::cout << "Please create a wallet first.\n";
+        return true;
+    }
+
+    if (m_expenseCategoryManager.getActiveCount() == 0) {
+        std::cout << "Please create an expense category first.\n";
+        return true;
+    }
+
+    int walletId;
+    int categoryId;
+    long long amount;
+    Date date;
+    std::string description;
+
+    m_walletManager.viewAllWallets();
+
+    if (!readInt("Wallet ID: ", walletId)) {
+        return false;
+    }
+
+    if (!m_walletManager.exists(walletId)) {
+        std::cout << "Wallet not found.\n";
+        return true;
+    }
+
+    m_expenseCategoryManager.viewAllExpenseCategories();
+
+    if (!readInt("Expense category ID: ", categoryId)) {
+        return false;
+    }
+
+    if (!m_expenseCategoryManager.exists(categoryId)) {
+        std::cout << "Expense category not found.\n";
+        return true;
+    }
+
+    if (!readMoney("Amount (VND): ", amount)) {
+        return false;
+    }
+
+    if (amount <= 0) {
+        std::cout << "Amount must be greater than zero.\n";
+        return true;
+    }
+
+    if (!m_walletManager.canWithdraw(walletId, amount)) {
+        std::cout << "Insufficient wallet balance.\n";
+        return true;
+    }
+
+    if (!readDate("Date (DD/MM/YYYY): ", date)) {
+        return false;
+    }
+
+    if (!readText("Description: ", description, true)) {
+        return false;
+    }
+
+    Expense expense(Transaction::INVALID_ID, date, amount,
+                    description, walletId, categoryId);
+
+    if (m_transactionManager.addExpense(expense)) {
+        std::cout << "Expense added successfully.\n";
+        std::cout << "Current wallet balance: " << m_walletManager.getWalletBalance(walletId) << " VND\n";
+    } else {
+        std::cout << "Unable to add expense.\n";
+    }
+
+    return true;
+}
+
+void FinanceManager::viewTransactions(TransactionType type) const {
+    if (type == TransactionType::INCOME) {
+        std::cout << "\n===== INCOME LIST =====\n";
+    } else {
+        std::cout << "\n===== EXPENSE LIST =====\n";
+    }
+
+    bool found = false;
+
+    for (int i = 0; i < m_transactionManager.getTransactionCount(); ++i) {
+        const Transaction* transaction = m_transactionManager.getTransactionAt(i);
+
+        if (transaction && transaction->getType() == type) {
+            m_transactionManager.viewTransaction(transaction->getId());
+            found = true;
+        }
+    }
+
+    if (!found) {
+        std::cout << "No transactions found.\n";
     }
 }
 

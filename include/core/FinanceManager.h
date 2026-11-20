@@ -11,10 +11,14 @@
 #include "core/Date.h"
 #include "managers/ExpenseCategoryManager.h"
 #include "managers/IncomeSourceManager.h"
+#include "managers/TransactionManager.h"
 #include "managers/WalletManager.h"
 
 class FinanceManager {
 public:
+    // Constructors
+    FinanceManager();
+
     void run();
 
 private:
@@ -38,8 +42,14 @@ private:
 
     void runWalletMenu();
 
+    // Transaction Operations
+    bool addIncome();
+    bool addExpense();
+    void viewTransactions(TransactionType type) const;
+
     // Private Members
     WalletManager m_walletManager;
     IncomeSourceManager m_incomeSourceManager;
     ExpenseCategoryManager m_expenseCategoryManager;
+    TransactionManager m_transactionManager;
 };
