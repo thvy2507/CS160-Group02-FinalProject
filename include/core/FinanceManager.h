@@ -1,4 +1,3 @@
-
 /**
  * @file FinanceManager.h
  * @author TV1 (Vy)
@@ -10,6 +9,9 @@
 #include <string>
 
 #include "core/Date.h"
+#include "managers/ExpenseCategoryManager.h"
+#include "managers/IncomeSourceManager.h"
+#include "managers/WalletManager.h"
 
 class FinanceManager {
 public:
@@ -24,15 +26,20 @@ private:
 
     // Menu & Navigation
     void displayMenu() const;
-    bool handleChoice(int choice) const;
+    bool handleChoice(int choice);
 
-    void runIncomeMenu() const;
-    void runIncomeSourceMenu() const;
+    void runIncomeMenu();
+    void runIncomeSourceMenu();
 
-    void runExpenseMenu() const;
-    void runExpenseCategoryMenu() const;
+    void runExpenseMenu();
+    void runExpenseCategoryMenu();
 
     void runStatisticsMenu() const;
 
-    void runWalletMenu() const;
+    void runWalletMenu();
+
+    // Private Members
+    WalletManager m_walletManager;
+    IncomeSourceManager m_incomeSourceManager;
+    ExpenseCategoryManager m_expenseCategoryManager;
 };

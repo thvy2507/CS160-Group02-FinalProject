@@ -119,7 +119,7 @@ void FinanceManager::displayMenu() const {
     std::cout << "0. Exit\n";
 }
 
-bool FinanceManager::handleChoice(int choice) const {
+bool FinanceManager::handleChoice(int choice) {
     switch (choice) {
         case 0:
             std::cout << "Goodbye!\n";
@@ -151,7 +151,7 @@ bool FinanceManager::handleChoice(int choice) const {
     }
 }
 
-void FinanceManager::runIncomeMenu() const {
+void FinanceManager::runIncomeMenu() {
     while (true) {
         std::cout << "\n===== INCOME MANAGEMENT =====\n";
         std::cout << "1. Add Income\n";
@@ -188,7 +188,7 @@ void FinanceManager::runIncomeMenu() const {
     }
 }
 
-void FinanceManager::runIncomeSourceMenu() const {
+void FinanceManager::runIncomeSourceMenu() {
     while (true) {
         std::cout << "\n===== INCOME SOURCE MANAGEMENT =====\n";
         std::cout << "1. Add Income Source\n";
@@ -207,12 +207,73 @@ void FinanceManager::runIncomeSourceMenu() const {
             case 0:
                 return;
 
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-                std::cout << "This operation is not implemented yet.\n";
+            case 1: {
+                std::string name;
+
+                if (!readText("Income source name: ", name)) {
+                    return;
+                }
+
+                int id = m_incomeSourceManager.addIncomeSource(name);
+
+                if (id > 0) {
+                    std::cout << "Income source added successfully. ID: " << id << "\n";
+                } else {
+                    std::cout << "Unable to add income source. Check the name.\n";
+                }
+
                 break;
+            }
+
+            case 2:
+                m_incomeSourceManager.viewAllIncomeSources();
+                break;
+
+            case 3: {
+                m_incomeSourceManager.viewAllIncomeSources();
+
+                int id;
+                std::string name;
+
+                if (!readInt("Income source ID: ", id)) {
+                    return;
+                }
+
+                if (!m_incomeSourceManager.exists(id)) {
+                    std::cout << "Income source not found.\n";
+                    break;
+                }
+
+                if (!readText("New name: ", name)) {
+                    return;
+                }
+
+                if (m_incomeSourceManager.editIncomeSource(id, name)) {
+                    std::cout << "Income source updated successfully.\n";
+                } else {
+                    std::cout << "Unable to update income source.\n";
+                }
+
+                break;
+            }
+
+            case 4: {
+                m_incomeSourceManager.viewAllIncomeSources();
+
+                int id;
+
+                if (!readInt("Income source ID: ", id)) {
+                    return;
+                }
+
+                if (m_incomeSourceManager.deleteIncomeSource(id)) {
+                    std::cout << "Income source deleted successfully.\n";
+                } else {
+                    std::cout << "Income source not found.\n";
+                }
+
+                break;
+            }
 
             default:
                 std::cout << "Invalid option. Please try again.\n";
@@ -220,7 +281,7 @@ void FinanceManager::runIncomeSourceMenu() const {
     }
 }
 
-void FinanceManager::runExpenseMenu() const {
+void FinanceManager::runExpenseMenu() {
     while (true) {
         std::cout << "\n===== EXPENSE MANAGEMENT =====\n";
         std::cout << "1. Add Expense\n";
@@ -257,7 +318,7 @@ void FinanceManager::runExpenseMenu() const {
     }
 }
 
-void FinanceManager::runExpenseCategoryMenu() const {
+void FinanceManager::runExpenseCategoryMenu() {
     while (true) {
         std::cout << "\n===== EXPENSE CATEGORY MANAGEMENT =====\n";
         std::cout << "1. Add Expense Category\n";
@@ -276,12 +337,73 @@ void FinanceManager::runExpenseCategoryMenu() const {
             case 0:
                 return;
 
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-                std::cout << "This operation is not implemented yet.\n";
+            case 1: {
+                std::string name;
+
+                if (!readText("Expense category name: ", name)) {
+                    return;
+                }
+
+                int id = m_expenseCategoryManager.addExpenseCategory(name);
+
+                if (id > 0) {
+                    std::cout << "Expense category added successfully. ID: " << id << "\n";
+                } else {
+                    std::cout << "Unable to add expense category. Check the name.\n";
+                }
+
                 break;
+            }
+
+            case 2:
+                m_expenseCategoryManager.viewAllExpenseCategories();
+                break;
+
+            case 3: {
+                m_expenseCategoryManager.viewAllExpenseCategories();
+
+                int id;
+                std::string name;
+
+                if (!readInt("Expense category ID: ", id)) {
+                    return;
+                }
+
+                if (!m_expenseCategoryManager.exists(id)) {
+                    std::cout << "Expense category not found.\n";
+                    break;
+                }
+
+                if (!readText("New name: ", name)) {
+                    return;
+                }
+
+                if (m_expenseCategoryManager.editExpenseCategory(id, name)) {
+                    std::cout << "Expense category updated successfully.\n";
+                } else {
+                    std::cout << "Unable to update expense category.\n";
+                }
+
+                break;
+            }
+
+            case 4: {
+                m_expenseCategoryManager.viewAllExpenseCategories();
+
+                int id;
+
+                if (!readInt("Expense category ID: ", id)) {
+                    return;
+                }
+
+                if (m_expenseCategoryManager.deleteExpenseCategory(id)) {
+                    std::cout << "Expense category deleted successfully.\n";
+                } else {
+                    std::cout << "Expense category not found.\n";
+                }
+
+                break;
+            }
 
             default:
                 std::cout << "Invalid option. Please try again.\n";
@@ -305,7 +427,7 @@ void FinanceManager::runStatisticsMenu() const {
     }
 }
 
-void FinanceManager::runWalletMenu() const {
+void FinanceManager::runWalletMenu() {
     while (true) {
         std::cout << "\n===== WALLET MANAGEMENT =====\n";
         std::cout << "1. Add Wallet\n";
@@ -324,12 +446,83 @@ void FinanceManager::runWalletMenu() const {
             case 0:
                 return;
 
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-                std::cout << "This operation is not implemented yet.\n";
+            case 1: {
+                std::string name;
+                long long initialBalance;
+
+                if (!readText("Wallet name: ", name)) {
+                    return;
+                }
+
+                if (!readMoney("Initial balance (VND): ", initialBalance)) {
+                    return;
+                }
+
+                if (initialBalance < 0) {
+                    std::cout << "Initial balance cannot be negative.\n";
+                    break;
+                }
+
+                int id = m_walletManager.addWallet(name, initialBalance);
+
+                if (id > 0) {
+                    std::cout << "Wallet added successfully. ID: " << id << "\n";
+                } else {
+                    std::cout << "Unable to add wallet. Check the name.\n";
+                }
+
                 break;
+            }
+
+            case 2:
+                m_walletManager.viewAllWallets();
+                break;
+
+            case 3: {
+                m_walletManager.viewAllWallets();
+
+                int id;
+                std::string name;
+
+                if (!readInt("Wallet ID: ", id)) {
+                    return;
+                }
+
+                if (!m_walletManager.exists(id)) {
+                    std::cout << "Wallet not found.\n";
+                    break;
+                }
+
+                if (!readText("New wallet name: ", name)) {
+                    return;
+                }
+
+                if (m_walletManager.editWalletName(id, name)) {
+                    std::cout << "Wallet updated successfully.\n";
+                } else {
+                    std::cout << "Unable to update wallet.\n";
+                }
+
+                break;
+            }
+
+            case 4: {
+                m_walletManager.viewAllWallets();
+
+                int id;
+
+                if (!readInt("Wallet ID: ", id)) {
+                    return;
+                }
+
+                if (m_walletManager.deleteWallet(id)) {
+                    std::cout << "Wallet deleted successfully.\n";
+                } else {
+                    std::cout << "Wallet not found.\n";
+                }
+
+                break;
+            }
 
             default:
                 std::cout << "Invalid option. Please try again.\n";
