@@ -1,8 +1,15 @@
-#include <iostream>
+/**
+ * @file test_master_data.cpp
+ * @author TV2 (Khoi)
+ * @brief Tests master data management operations in memory.
+ */
+
 #include <cassert>
-#include "managers/WalletManager.h"
-#include "managers/IncomeSourceManager.h"
+#include <iostream>
+
 #include "managers/ExpenseCategoryManager.h"
+#include "managers/IncomeSourceManager.h"
+#include "managers/WalletManager.h"
 
 void testWalletOperations() {
     std::cout << "--- Testing WalletManager ---\n";
@@ -47,7 +54,7 @@ void testWalletOperations() {
 }
 
 void testCategoryOperations() {
-    std::cout << "--- Testing CategoryManagers ---\n";
+    std::cout << "--- Testing ExpenseCategoryManager ---\n";
     ExpenseCategoryManager ecm;
 
     int c1 = ecm.addExpenseCategory("An uong");
@@ -63,13 +70,13 @@ void testCategoryOperations() {
     int c3 = ecm.addExpenseCategory("An uong");
     assert(c3 == 3);
 
-    std::cout << "-> CategoryManager Passed.\n\n";
+    std::cout << "-> ExpenseCategoryManager Passed.\n\n";
 }
 
 int main() {
-    std::cout << "BAT DAU KIEM THU MASTER DATA MODULE (RAM CRUD)\n";
+    std::cout << "=== MASTER DATA TESTS ===\n";
     testWalletOperations();
     testCategoryOperations();
-    std::cout << "HOAN THANH - TAT CA TEST CASES PASSED.\n";
+    std::cout << "All master data tests passed!\n";
     return 0;
 }

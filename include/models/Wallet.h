@@ -1,3 +1,9 @@
+/**
+ * @file Wallet.h
+ * @author TV2 (Khoi)
+ * @brief Declares the wallet model and binary record structure.
+ */
+
 #ifndef MODELS_WALLET_H
 #define MODELS_WALLET_H
 
@@ -21,38 +27,47 @@ static_assert(std::is_trivially_copyable_v<WalletRecord>,
 
 class Wallet {
 public:
+    // Constants
     static constexpr int INVALID_ID = 0;
 
+    // Constructors
     Wallet();
     Wallet(int id, const std::string& name, Money initialBalance = 0);
     Wallet(int id, const std::string& name, Money initialBalance, Money currentBalance, bool isDeleted = false);
 
+    // Validation
+    bool isValid() const;
+
+    // Getters
     int getId() const;
     const std::string& getName() const;
     Money getInitialBalance() const;
     Money getBalance() const;
     bool isDeleted() const;
-    bool isValid() const;
 
+    // Setters
     bool setName(const std::string& name);
     void setInitialBalance(Money initialBalance);
     void setBalance(Money balance);
     void setDeleted(bool deleted);
 
-    bool canWithdraw(Money amount, bool allowNegative = false) const;
+    // Balance Operations
     bool deposit(Money amount);
+    bool canWithdraw(Money amount, bool allowNegative = false) const;
     bool withdraw(Money amount, bool allowNegative = false);
     void adjustBalance(Money delta);
 
+    // Binary Record Conversion
     WalletRecord toRecord(uint32_t nameOffset, uint32_t nameLength) const;
     static Wallet fromRecord(const WalletRecord& record, const std::string& resolvedName);
 
 private:
-    int id_;
-    std::string name_;
-    Money initialBalance_;
-    Money balance_;
-    bool isDeleted_;
+    // Private Members
+    int m_id;
+    std::string m_name;
+    Money m_initialBalance;
+    Money m_balance;
+    bool m_isDeleted;
 };
 
 #endif // MODELS_WALLET_H
