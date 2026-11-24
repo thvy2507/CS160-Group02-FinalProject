@@ -6,7 +6,7 @@
 
 ### Branches
 
-```
+```text
 main       ← stable, integrated code; only TV1 can merge PRs
 feat/...   ← new feature development
 fix/...    ← bug fixes
@@ -80,6 +80,7 @@ wip
 ### Language Rule
 
 - **English Only**: All code identifiers (variable names, class names, functions, etc.), source comments, and project documentation must be written in English.
+- Console messages and user-facing program output must also be written in English.
 - Planning documents may be written in Vietnamese.
 
 ### Naming
@@ -115,6 +116,14 @@ enum class TransactionType { INCOME , EXPENSE };
 // File → class name (1-to-1)
 // WalletManager → WalletManager.h + WalletManager.cpp
 ```
+
+### Include Organization
+
+- In `.h` files, include standard headers first, followed by project headers.
+- In `.cpp` files, include the corresponding header first.
+- Sort includes alphabetically within each group.
+- Separate standard and project headers with a blank line.
+- Remove unused includes.
 
 ### Class Structure — Layout Order
 
@@ -180,6 +189,11 @@ bool loadData(const std::string& path);
 bool deleteWallet(int id);
 bool saveData(const std::string& path); // false if file doesn't exist
 ```
+
+- Validate inputs before modifying application data.
+- Failed operations must not leave partially updated data.
+- Check for integer overflow before arithmetic operations.
+- Document return values when their meanings are not obvious.
 
 ### Do Not Use
 
