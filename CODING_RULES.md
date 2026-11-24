@@ -6,7 +6,7 @@
 
 ### Branches
 
-```
+```text
 main       ← stable, integrated code; only TV1 can merge PRs
 feat/...   ← new feature development
 fix/...    ← bug fixes
@@ -80,6 +80,7 @@ wip
 ### Language Rule
 
 - **English Only**: All code identifiers (variable names, class names, functions, etc.), source comments, and project documentation must be written in English.
+- Console messages and user-facing program output must also be written in English.
 - Planning documents may be written in Vietnamese.
 
 ### Naming
@@ -94,7 +95,7 @@ bool addWallet(const std::string& name);
 bool loadFromFile(const std::string& path);
 
 // Variable → camelCase
-double walletBalance = 0.0;
+long long walletBalance = 0;
 int transactionCount = 0;
 
 // Private member → m_ prefix
@@ -102,7 +103,7 @@ class Wallet {
 private:
     int m_id;
     std::string m_name;
-    double m_balance;
+    long long m_balance;
 };
 
 // Constant & enum value → UPPER_SNAKE_CASE
@@ -116,34 +117,49 @@ enum class TransactionType { INCOME , EXPENSE };
 // WalletManager → WalletManager.h + WalletManager.cpp
 ```
 
+- Monetary values use signed 64-bit integers and represent whole VND amounts.
+- Do not use floating-point types to store money.
+
+### Include Organization
+
+- In `.h` files, include standard headers first, followed by project headers.
+- In `.cpp` files, include the corresponding header first.
+- Sort includes alphabetically within each group.
+- Separate standard and project headers with a blank line.
+- Remove unused includes.
+
 ### Class Structure — Layout Order
 
-```cpp
-class WalletManager {
-public:
-    // 1. Constructor / Destructor
-    WalletManager();
-    ~WalletManager();
+- Organize methods by logical responsibility, not alphabetically.
+- Keep related methods and overloads together.
+- Keep implementation order in `.cpp` consistent with declaration order in `.h`.
+- Use consistent section comments in both `.h` and `.cpp`.
+- Omit sections that are not applicable.
 
-    // 2. Public methods (alphabetical)
-    bool addWallet(const std::string& name);
-    bool deleteWallet(int id);
-    bool updateWallet(int id, const std::string& name);
+**Models — Recommended Order:**
 
-    // 3. Getters / Setters
-    double getBalance(int id) const;
-    int getWalletCount() const;
+1. Constants
+2. Constructors & Destructor
+3. Validation
+4. Getters & Setters
+5. Model-specific Operations
+6. Binary Record Conversion
+7. Private Helpers
+8. Private Members
 
-private:
-    // 4. Private methods
-    int findWalletIndex(int id) const;
-    bool isValidWalletId(int id) const;
+**Managers — Recommended Order:**
 
-    // 5. Private members
-    DynamicArray<Wallet> m_wallets;
-    int m_nextId;
-};
-```
+1. Constructors & Destructor
+2. CRUD Operations (Add → View → Edit → Delete)
+3. Search & Access
+4. Domain-specific Operations
+5. Binary File Operations
+6. Private Helpers
+7. Private Members
+
+**Core & UI Classes:**
+
+Organize methods according to application responsibilities, such as Application Control, Input Helpers, Menu Navigation, and Transaction Operations.
 
 ### Pointers & Memory
 
@@ -170,7 +186,7 @@ std::string walletName = "Cash";
 
 // Methods that do not modify object state → const
 int getWalletCount() const;
-double getBalance() const;
+long long getBalance() const;
 
 // Large parameters → pass by const reference
 bool addWallet(const std::string& name);
@@ -180,6 +196,11 @@ bool loadData(const std::string& path);
 bool deleteWallet(int id);
 bool saveData(const std::string& path); // false if file doesn't exist
 ```
+
+- Validate inputs before modifying application data.
+- Failed operations must not leave partially updated data.
+- Check for integer overflow before arithmetic operations.
+- Document return values when their meanings are not obvious.
 
 ### Do Not Use
 
