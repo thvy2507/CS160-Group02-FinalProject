@@ -36,7 +36,7 @@ All members reviewed and adapted AI-assisted suggestions and took responsibility
 | Model        | GPT-6                                                        |
 | Usage Period | 14/11/2026 – 20/11/2026           |
 | Purposes     | Core implementation, CLI integration, code review, compatibility fixes, input validation, overflow protection, automated testing, and documentation. |
-| Evidence     | ChatGPT conversation history and summarized prompt logs provided in Section 3. |
+| Evidence     | Summarized prompt logs provided in Section 3. |
 
 **26125041 - Lê Thiện Khôi (TV2)**
 
@@ -48,7 +48,7 @@ All members reviewed and adapted AI-assisted suggestions and took responsibility
 | Model        | Gemini                                                       |
 | Usage Period | 14/11/2026 – 20/11/2026                                      |
 | Purposes     | In-memory Master Data CRUD implementation, ID management, soft deletion, wallet balance management, and test development. |
-| Evidence     | Gemini conversation history and summarized prompt logs provided in Section 3. |
+| Evidence     | Summarized prompt logs provided in Section 3.                |
 
 **26125089 - Dương Thị Nhã Uyên (TV3)**
 
@@ -60,7 +60,7 @@ All members reviewed and adapted AI-assisted suggestions and took responsibility
 | Model        | Claude Sonnet 5.5                                            |
 | Usage Period | 17/11/2026 – 20/11/2026                                      |
 | Purposes     | Transaction implementation guidance, code explanation, transaction validation, wallet balance updates, test planning, and Git troubleshooting. |
-| Evidence     | Claude conversation history and summarized prompt logs provided in Section 3. |
+| Evidence     | Summarized prompt logs provided in Section 3.                |
 
 ---
 
@@ -74,7 +74,7 @@ All members reviewed and adapted AI-assisted suggestions and took responsibility
 | Model        | GPT-6                                                        |
 | Usage Period | 17/11/2026 – 20/11/2026                                      |
 | Purposes     | Statistics implementation guidance, code explanation, test preparation, integration debugging, and Git/GitHub guidance. |
-| Evidence     | ChatGPT conversation history and ummarized prompt logs provided in Section 3. |
+| Evidence     | Summarized prompt logs provided in Section 3.                |
 
 ---
 

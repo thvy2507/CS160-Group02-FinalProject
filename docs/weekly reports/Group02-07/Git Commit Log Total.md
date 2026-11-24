@@ -11,9 +11,9 @@
 
 This document records the **cumulative Git commit history** reachable from `main` from project initialization through **20 November 2026**, including commits originally developed on feature branches and subsequently merged.
 
-**Counting rules:** Each unique commit reachable from `main` is counted once, attributed to its GitHub author and dated in Vietnam time (UTC+07:00). Merge commits are included but identified separately from non-merge commits. Counts describe Git history, not lines of code or individual effort. For merge commits, the file field describes the affected scope rather than additional implementation work.
+**Counting Rules:** This log includes source code, tests, build configuration, project structure, coding conventions, and technical documentation directly related to implementation. Merge commits and documentation unrelated to development, such as weekly reports, are excluded. Each included commit is counted once.
 
-**Reconciliation with Week 06:** The Week 06 log contained 34 commits. There are 37 additional commits in Week 07, including the Week 06 report commit `67759e5` (14/11/2026 in Vietnam time). The cumulative total is 71 commits, through `cf202cd` (PR #17). The Week 07 report itself and later documentation updates are outside this snapshot. Earlier evidence images are referenced from the Week 06 folder; no new screenshots are assumed.
+**Commit Summary:** As of 20 November 2026, the filtered cumulative history contains 53 commits: 26 from previous weeks and 27 from Week 07. This log excludes the Week 07 report submission and subsequent documentation updates.
 
 ---
 
@@ -33,11 +33,14 @@ This document records the **cumulative Git commit history** reachable from `main
 **25125049 - Trần Hồng Vy (TV1)**
 
 > **GitHub Username:** `thvy2507`
-> **Total Code Commits:** 25
-> **Week 07 Code Commits:** 14
+> **Total Included Commits:** 30
+> **Week 07 Included Commits:** 16
 
 | Date       | Commit Hash                                                  | Commit Message                                               |
 | ---------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 28/10/2026 | [`361fde8`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/361fde8) | docs: add project planning documents                         |
+| 06/11/2026 | [`355c337`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/355c337) | [TV1] docs: update project planning and week 1 tasks         |
+| 07/11/2026 | [`adcdd29`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/adcdd29) | [TV1] build: initialize project structure                    |
 | 07/11/2026 | [`2940d00`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/2940d00) | [TV1] build: set up CMake and CLI skeleton                   |
 | 11/11/2026 | [`0dd49fa`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/0dd49fa) | [TV1] feat: implement DynamicArray core                      |
 | 11/11/2026 | [`8ea082c`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/8ea082c) | [TV1] feat: extend DynamicArray operations                   |
@@ -49,6 +52,7 @@ This document records the **cumulative Git commit history** reachable from `main
 | 13/11/2026 | [`277ed28`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/277ed28) | [TV1] refactor: standardize transaction interfaces           |
 | 13/11/2026 | [`e6fc147`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/e6fc147) | [TV1] refactor: align statistics with shared interfaces      |
 | 13/11/2026 | [`8ed5371`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/8ed5371) | [TV1] build: integrate statistics and dashboard modules      |
+| 17/11/2026 | [`959b6f6`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/959b6f6) | [TV1] docs: add sprint 2 implementation plan                 |
 | 19/11/2026 | [`03e033b`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/03e033b) | [TV1] feat: implement input validation helpers               |
 | 19/11/2026 | [`ba318bd`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ba318bd) | [TV1] feat: implement CLI menu navigation                    |
 | 20/11/2026 | [`cfd993c`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/cfd993c) | [TV1] fix: restore DynamicArray and align master data API    |
@@ -57,6 +61,7 @@ This document records the **cumulative Git commit history** reachable from `main
 | 20/11/2026 | [`561bc22`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/561bc22) | [TV1] style: standardize transaction coding conventions      |
 | 20/11/2026 | [`1aaa20f`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/1aaa20f) | [TV1] refactor: standardize statistics conventions and date input |
 | 20/11/2026 | [`ddb2d30`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ddb2d30) | [TV1] build: integrate master data and transaction modules   |
+| 20/11/2026 | [`bec2f41`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/bec2f41) | [TV1] docs: update statistics integration and verification status |
 | 20/11/2026 | [`e734d24`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/e734d24) | [TV1] feat: integrate master data operations                 |
 | 20/11/2026 | [`baec448`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/baec448) | [TV1] feat: integrate income and expense operations          |
 | 20/11/2026 | [`3874710`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/3874710) | [TV1] feat: integrate date-range statistics                  |
@@ -76,103 +81,130 @@ This document records the **cumulative Git commit history** reachable from `main
 
 **Commit Details:**
 
-- **Commit 1 — [`2940d00`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/2940d00)** (07/11/2026)
+- **Commit 1 — [`361fde8`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/361fde8)** (28/10/2026)
+  - **Message:** `docs: add project planning documents`
+  - **Files:** `.gitignore`, `CODING_RULES.md`, `FILE_STRUCTURE.md`, `README.md`, `ROLES.md`, `WEEKLY_PLAN.md`
+  - **Description:** Established the project's architecture, coding conventions, file structure, team responsibilities, and development plan.
+
+- **Commit 2 — [`355c337`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/355c337)** (06/11/2026)
+  - **Message:** `[TV1] docs: update project planning and week 1 tasks`
+  - **Files:** `CODING_RULES.md`, `WEEKLY_PLAN.md`, `docs/plans/plan_for_week_1.md`
+  - **Description:** Updated coding rules, the development schedule, and the initial implementation tasks.
+
+- **Commit 3 — [`adcdd29`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/adcdd29)** (07/11/2026)
+  - **Message:** `[TV1] build: initialize project structure`
+  - **Files / Scope:** Initial `data/`, `include/`, `src/`, and `tests/` directories.
+  - **Description:** Initialized the project directory structure for the Core, Models, Managers, Statistics, and UI modules.
+
+- **Commit 4 — [`2940d00`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/2940d00)** (07/11/2026)
   - **Message:** `[TV1] build: set up CMake and CLI skeleton`
   - **Files:** `CMakeLists.txt`, `include/core/FinanceManager.h`, `src/core/FinanceManager.cpp`, `src/main.cpp`
   - **Description:** Added the C++17 CMake configuration and the main console menu skeleton.
-- **Commit 2 — [`0dd49fa`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/0dd49fa)** (11/11/2026)
+- **Commit 5 — [`0dd49fa`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/0dd49fa)** (11/11/2026)
   - **Message:** `[TV1] feat: implement DynamicArray core`
   - **Files:** `include/core/DynamicArray.h`
   - **Description:** Introduced manual dynamic array allocation, object lifetime, deep copying and basic operations.
-- **Commit 3 — [`8ea082c`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/8ea082c)** (11/11/2026)
+- **Commit 6 — [`8ea082c`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/8ea082c)** (11/11/2026)
   - **Message:** `[TV1] feat: extend DynamicArray operations`
   - **Files:** `include/core/DynamicArray.h`
   - **Description:** Extended the DynamicArray API with additional access and modification operations.
-- **Commit 4 — [`d06f4f9`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/d06f4f9)** (11/11/2026)
+- **Commit 7 — [`d06f4f9`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/d06f4f9)** (11/11/2026)
   - **Message:** `[TV1] test: add DynamicArray tests`
   - **Files:** `tests/test_core.cpp`
   - **Description:** Added tests for array insertion, access, copying, removal and invalid indices.
-- **Commit 5 — [`d91da5d`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/d91da5d)** (12/11/2026)
+- **Commit 8 — [`d91da5d`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/d91da5d)** (12/11/2026)
   - **Message:** `[TV1] feat: implement Date utilities`
   - **Files:** `CMakeLists.txt`, `include/core/Date.h`, `src/core/Date.cpp`
   - **Description:** Added Date validation, current-date initialization, leap-year rules and comparisons.
-- **Commit 6 — [`25cef6b`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/25cef6b)** (12/11/2026)
+- **Commit 9 — [`25cef6b`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/25cef6b)** (12/11/2026)
   - **Message:** `[TV1] test: add Date validation and comparison tests`
   - **Files:** `tests/test_core.cpp`
   - **Description:** Added Date test cases for invalid dates, leap years and comparison operators.
-- **Commit 7 — [`ae4934e`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ae4934e)** (13/11/2026)
+- **Commit 10 — [`ae4934e`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ae4934e)** (13/11/2026)
   - **Message:** `[TV1] refactor: standardize master data interfaces`
   - **Files:** `include/models/{Wallet,IncomeSource,ExpenseCategory}.h`, `include/managers/{Wallet,IncomeSource,ExpenseCategory}Manager.h`
   - **Description:** Aligned Master Data naming, money type, section comments and interface conventions.
-- **Commit 8 — [`cef8b13`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/cef8b13)** (13/11/2026)
+- **Commit 11 — [`cef8b13`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/cef8b13)** (13/11/2026)
   - **Message:** `[TV1] fix: align master data naming and comments`
   - **Files:** `include/models/ExpenseCategory.h`, `include/models/IncomeSource.h`
   - **Description:** Corrected model member naming and comments.
-- **Commit 9 — [`277ed28`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/277ed28)** (13/11/2026)
+- **Commit 12 — [`277ed28`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/277ed28)** (13/11/2026)
   - **Message:** `[TV1] refactor: standardize transaction interfaces`
   - **Files:** `include/models/{Transaction,Income,Expense,RecurringTransaction}.h`, `include/managers/{Transaction,RecurringTransaction}Manager.h`
   - **Description:** Standardized interface sections, invalid IDs and memory-ownership documentation.
-- **Commit 10 — [`e6fc147`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/e6fc147)** (13/11/2026)
+- **Commit 13 — [`e6fc147`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/e6fc147)** (13/11/2026)
   - **Message:** `[TV1] refactor: align statistics with shared interfaces`
   - **Files:** `include/statistics/NumberFormatter.h`, `include/statistics/StatisticsManager.h`, `src/statistics/NumberFormatter.cpp`, `src/statistics/StatisticsManager.cpp`, `docs/integration.md`, `docs/statistics-design.md`, `tests/statistics-test-cases.md`, `tests/test_statistics.cpp`
   - **Description:** Changed statistics amounts to long long and replaced the abstract Transaction collection parameter with const TransactionManager&, updating documentation and tests.
-- **Commit 11 — [`8ed5371`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/8ed5371)** (13/11/2026)
+- **Commit 14 — [`8ed5371`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/8ed5371)** (13/11/2026)
   - **Message:** `[TV1] build: integrate statistics and dashboard modules`
   - **Files:** `CMakeLists.txt`
   - **Description:** Added four Statistics and UI .cpp files to the main CMake executable.
-- **Commit 12 — [`03e033b`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/03e033b)** (19/11/2026)
+
+- **Commit 15 — [`959b6f6`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/959b6f6)** (17/11/2026)
+  - **Message:** `[TV1] docs: add sprint 2 implementation plan`
+  - **Files:** `docs/plans/plan_for_sprint_2.md`
+  - **Description:** Defined Sprint 2 implementation tasks, module dependencies, integration order, and testing requirements for all four members.
+
+- **Commit 16 — [`03e033b`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/03e033b)** (19/11/2026)
   - **Message:** `[TV1] feat: implement input validation helpers`
   - **Files / Scope:** `include/core/FinanceManager.h`, `src/core/FinanceManager.cpp`
   - **Description:** Added integer, money, text and date input validation helpers.
-- **Commit 13 — [`ba318bd`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ba318bd)** (19/11/2026)
+- **Commit 17 — [`ba318bd`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ba318bd)** (19/11/2026)
   - **Message:** `[TV1] feat: implement CLI menu navigation`
   - **Files / Scope:** `include/core/FinanceManager.h`, `src/core/FinanceManager.cpp`
   - **Description:** Implemented navigation between main and module menus.
-- **Commit 14 — [`cfd993c`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/cfd993c)** (20/11/2026)
+- **Commit 18 — [`cfd993c`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/cfd993c)** (20/11/2026)
   - **Message:** `[TV1] fix: restore DynamicArray and align master data API`
   - **Files / Scope:** `include/core/DynamicArray.h`, `src/managers/WalletManager.cpp`, `src/managers/IncomeSourceManager.cpp`, `src/managers/ExpenseCategoryManager.cpp`
   - **Description:** Restored the shared array and aligned managers with its API.
-- **Commit 15 — [`ade3aae`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ade3aae)** (20/11/2026)
+- **Commit 19 — [`ade3aae`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ade3aae)** (20/11/2026)
   - **Message:** `[TV1] style: standardize master data coding conventions`
   - **Files / Scope:** Master Data model and manager headers and source files; `src/tests/test_master_data.cpp`
   - **Description:** Standardized Master Data naming, organization and comments.
-- **Commit 16 — [`51c6cb7`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/51c6cb7)** (20/11/2026)
+- **Commit 20 — [`51c6cb7`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/51c6cb7)** (20/11/2026)
   - **Message:** `[TV1] test: verify transaction operations and wallet balance updates`
   - **Files / Scope:** `tests/test_transaction.cpp`
   - **Description:** Added transaction tests for valid operations, references, amounts, balances and ID continuity.
-- **Commit 17 — [`561bc22`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/561bc22)** (20/11/2026)
+- **Commit 21 — [`561bc22`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/561bc22)** (20/11/2026)
   - **Message:** `[TV1] style: standardize transaction coding conventions`
   - **Files / Scope:** `include/managers/TransactionManager.h`, `include/models/Expense.h`, `include/models/Income.h`, `include/models/Transaction.h`, `src/managers/TransactionManager.cpp`, `src/models/Transaction.cpp`
   - **Description:** Aligned Transaction interfaces and implementations with coding conventions.
-- **Commit 18 — [`1aaa20f`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/1aaa20f)** (20/11/2026)
+- **Commit 22 — [`1aaa20f`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/1aaa20f)** (20/11/2026)
   - **Message:** `[TV1] refactor: standardize statistics conventions and date input`
   - **Files / Scope:** `docs/integration.md`, Statistics manager/menu headers and source files, `tests/test_statistics.cpp`
   - **Description:** Aligned Statistics naming, method organization and DD/MM/YYYY input.
-- **Commit 19 — [`ddb2d30`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ddb2d30)** (20/11/2026)
+- **Commit 23 — [`ddb2d30`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ddb2d30)** (20/11/2026)
   - **Message:** `[TV1] build: integrate master data and transaction modules`
   - **Files / Scope:** `CMakeLists.txt`
   - **Description:** Added the required Master Data and Transaction implementation files to the application build.
-- **Commit 20 — [`e734d24`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/e734d24)** (20/11/2026)
+
+- **Commit 24 — [`bec2f41`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/bec2f41)** (20/11/2026)
+  - **Message:** `[TV1] docs: update statistics integration and verification status`
+  - **Files:** `docs/integration.md`
+  - **Description:** Updated Statistics integration documentation with implementation progress, build verification, and test results.
+
+- **Commit 25 — [`e734d24`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/e734d24)** (20/11/2026)
   - **Message:** `[TV1] feat: integrate master data operations`
   - **Files / Scope:** `include/core/FinanceManager.h`, `src/core/FinanceManager.cpp`
   - **Description:** Connected Wallet, Income Source and Expense Category CRUD to the CLI.
-- **Commit 21 — [`baec448`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/baec448)** (20/11/2026)
+- **Commit 26 — [`baec448`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/baec448)** (20/11/2026)
   - **Message:** `[TV1] feat: integrate income and expense operations`
   - **Files / Scope:** `include/core/FinanceManager.h`, `src/core/FinanceManager.cpp`
   - **Description:** Connected transaction creation and viewing to the CLI and existing balance operations.
-- **Commit 22 — [`3874710`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/3874710)** (20/11/2026)
+- **Commit 27 — [`3874710`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/3874710)** (20/11/2026)
   - **Message:** `[TV1] feat: integrate date-range statistics`
   - **Files / Scope:** `src/core/FinanceManager.cpp`
   - **Description:** Connected the Statistics menu to the shared TransactionManager.
-- **Commit 23 — [`ff4a777`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ff4a777)** (20/11/2026)
+- **Commit 28 — [`ff4a777`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ff4a777)** (20/11/2026)
   - **Message:** `[TV1] test: add CLI integration tests`
   - **Files / Scope:** `tests/test_cli.cpp`
   - **Description:** Added 33 automated checks for financial workflows, invalid input and EOF handling.
-- **Commit 24 — [`478f437`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/478f437)** (20/11/2026)
+- **Commit 29 — [`478f437`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/478f437)** (20/11/2026)
   - **Message:** `[TV1] fix: prevent wallet balance overflow`
   - **Files / Scope:** `src/managers/WalletManager.cpp`, `src/models/Wallet.cpp`, `tests/test_transaction.cpp`
   - **Description:** Added overflow guards for active wallet totals and deposits and a regression test.
-- **Commit 25 — [`5efc884`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/5efc884)** (20/11/2026)
+- **Commit 30 — [`5efc884`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/5efc884)** (20/11/2026)
   - **Message:** `[TV1] style: standardize core coding conventions`
   - **Files / Scope:** `include/core/FinanceManager.h`, `src/core/FinanceManager.cpp`
   - **Description:** Updated documentation, section comments and implementation order without changing business logic.
@@ -182,8 +214,8 @@ This document records the **cumulative Git commit history** reachable from `main
 **26125041 - Lê Thiện Khôi (TV2)**
 
 > **GitHub Username:** `k12khoi`
-> **Total Code Commits:** 2
-> **Week 07 Code Commits:** 1
+> **Total Included Commits:** 2
+> **Week 07 Included Commits:** 1
 
 | Date       | Commit Hash                                                  | Commit Message                                            |
 | ---------- | ------------------------------------------------------------ | --------------------------------------------------------- |
@@ -213,8 +245,8 @@ This document records the **cumulative Git commit history** reachable from `main
 **26125089 - Dương Thị Nhã Uyên (TV3)**
 
 > **GitHub Username:** `Nhauyn`
-> **Total Commits:** 11
-> **Week 07 Commits:** 3
+> **Total Included Commits:** 11
+> **Week 07 Included Commits:** 3
 
 | Date       | Commit Hash                                                  | Commit Message                                               |
 | ---------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -296,18 +328,20 @@ This document records the **cumulative Git commit history** reachable from `main
 **26125070 - Trần Nhật Tân (TV4)**
 
 > **GitHub Username:** `Tan-TN`
-> **Total Code Commits:** 10
-> **Week 07 Code Commits:** 7
+> **Total Included Commits:** 10
+> **Week 07 Included Commits:** 7
 
 | Date       | Commit Hash                                                  | Commit Message                                               |
 | ---------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | 10/11/2026 | [`a618767`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/a618767) | [TV4] feat: add statistics and dashboard skeletons           |
 | 10/11/2026 | [`cf2a486`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/cf2a486) | [TV4] test: add skeleton check and sample cases              |
+| 10/11/2026 | [`6a2387d`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/6a2387d) | [TV4] docs: document statistics design and integration       |
 | 18/11/2026 | [`01a0f4d`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/01a0f4d) | [TV4] feat: implement date-range financial summary           |
 | 18/11/2026 | [`2046aa2`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/2046aa2) | [TV4] test: add empty transaction summary case               |
 | 18/11/2026 | [`ca0f782`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/ca0f782) | [TV4] test: cover reserved and invalid data ranges           |
 | 18/11/2026 | [`20cabf9`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/20cabf9) | [TV4] test: cover transaction totals and date boundaries     |
 | 18/11/2026 | [`9d3359c`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/9d3359c) | [TV4] feat: add date-range reporting to statistics menu      |
+| 18/11/2026 | [`bf433b4`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/bf433b4) | [TV4] docs: describe Sprint 2 statistics integration         |
 | 20/11/2026 | [`e5ee949`](https://github.com/thvy2507/CS160-Group02-FinalProject/commit/e5ee949) | [TV4] fix: handle Date validation exceptions in menu and tests |
 
 **Evidence:**
