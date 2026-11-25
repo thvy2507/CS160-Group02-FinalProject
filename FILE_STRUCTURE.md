@@ -25,14 +25,16 @@ CS160-Group02-FinalProject/
 │
 ├── data/
 │   ├── .gitkeep
-│   ├── wallets.bin                            ← TV2: Fixed-size wallet records
-│   ├── walletNames.bin                        ← TV2: Wallet Name Pool
-│   ├── sources.bin                            ← TV2: Income source records
-│   ├── sourceNames.bin                        ← TV2: Income Source Name Pool
-│   ├── categories.bin                         ← TV2: Expense category records
-│   ├── categoryNames.bin                      ← TV2: Expense Category Name Pool
-│   ├── transactions.bin                       ← TV3: Transaction records
-│   └── recurring.bin                          ← TV3: Recurring transaction records
+│   ├── wallets.bin
+│   ├── walletNames.bin
+│   ├── sources.bin
+│   ├── sourceNames.bin
+│   ├── categories.bin
+│   ├── categoryNames.bin
+│   ├── transactions.bin
+│   ├── transactionDescriptions.bin
+│   ├── recurring.bin
+│   └── recurringDescriptions.bin
 │
 ├── tests/                                     ← Each member tests their own module
 │   ├── test_core.cpp                          ← TV1
@@ -169,6 +171,14 @@ The `FinanceManager` coordinates the application's modules. Business logic must 
 - Store variable-length names in separate Name Pool files.
 - Reference names using their offset and length.
 - Handle renaming and deletion without corrupting existing records.
+- Serialize records field by field according to the documented on-disk layout.
+- Use little-endian encoding for multi-byte integers.
+- Store variable-length transaction descriptions in separate Description Pool files.
+- Add, rename, and delete operations modify in-memory data only.
+- Sprint 3 uses full file rewrites during save.
+
+For detailed serialization rules and record layouts, see
+[`docs/binary-format.md`](docs/binary-format.md).
 
 **Responsibilities:**
 
