@@ -8,6 +8,7 @@ add_executable(PersonalFinanceManager
     # Core
     src/core/FinanceManager.cpp
     src/core/Date.cpp
+    src/core/BinaryIO.cpp
 
     # Models
     src/models/Wallet.cpp
