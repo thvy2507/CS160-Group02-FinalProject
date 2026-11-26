@@ -40,7 +40,12 @@ bool calculateSummaryForRange(
             continue;
         }
 
-        Date date = transaction->getDate();
+        const Date date = transaction->getDate();
+
+        if (!date.isValid()) {
+            return false;
+        }
+
         if (date < start || date > end) {
             continue;
         }
