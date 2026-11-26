@@ -17,6 +17,7 @@
 
 namespace {
 
+// Output Helpers
 void printTotals(const StatisticsResult& result) {
     std::cout << "Total Income: " << result.totalIncome << " VND\n"
               << "Total Expense: " << result.totalExpense << " VND\n"
@@ -24,6 +25,17 @@ void printTotals(const StatisticsResult& result) {
 }
 
 } // namespace
+
+// Menu & Navigation
+void StatisticsMenu::show() const {
+    std::cout << "\n=== STATISTICS ===\n"
+              << "1. Summary by date range\n"
+              << "2. Summary by date and wallet\n"
+              << "3. Annual overview [unavailable]\n"
+              << "4. Income by source [unavailable]\n"
+              << "5. Expenses by category [unavailable]\n"
+              << "0. Back\nChoice: ";
+}
 
 int StatisticsMenu::readChoice() const {
     const int BACK = 0;
@@ -74,16 +86,7 @@ void StatisticsMenu::run(const TransactionManager& transactions,
     }
 }
 
-void StatisticsMenu::show() const {
-    std::cout << "\n=== STATISTICS ===\n"
-              << "1. Summary by date range\n"
-              << "2. Summary by date and wallet\n"
-              << "3. Annual overview [unavailable]\n"
-              << "4. Income by source [unavailable]\n"
-              << "5. Expenses by category [unavailable]\n"
-              << "0. Back\nChoice: ";
-}
-
+// Private Helpers
 bool StatisticsMenu::readDate(const char* prompt, Date& date) const {
     std::string line;
 

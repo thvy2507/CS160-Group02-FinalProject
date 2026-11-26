@@ -11,14 +11,15 @@ class WalletManager;
 
 class StatisticsMenu {
 public:
+    // Menu & Navigation
     void show() const;
     int readChoice() const;
     void run(const TransactionManager& transactions, const WalletManager& wallets) const;
 
 private:
+    // Private Helpers
     bool readDate(const char* prompt, Date& date) const;
     bool readDateRange(Date& start, Date& end) const;
     bool showDateSummary(const TransactionManager& transactions) const;
-    bool showWalletSummary(const TransactionManager& transactions,
-                           const WalletManager& wallets) const;
+    bool showWalletSummary(const TransactionManager& transactions, const WalletManager& wallets) const;
 };

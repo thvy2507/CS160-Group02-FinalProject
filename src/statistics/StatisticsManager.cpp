@@ -18,6 +18,7 @@
 
 namespace {
 
+// Statistics Helpers
 bool calculateSummaryForRange(
     const TransactionManager& transactions,
     const Date& start, const Date& end,
