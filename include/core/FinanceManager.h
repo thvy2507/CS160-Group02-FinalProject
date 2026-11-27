@@ -56,6 +56,7 @@ private:
     bool createRecurringTransaction();
     bool editRecurringTransaction();
     bool deleteRecurringTransaction();
+    bool generateMonthlyTransactions();
 
     // Private Members
     WalletManager m_walletManager;

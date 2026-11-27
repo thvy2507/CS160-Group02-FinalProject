@@ -718,7 +718,9 @@ void FinanceManager::runRecurringMenu() {
                 break;
 
             case 5:
-                std::cout << "This operation is not implemented yet.\n";
+                if (!generateMonthlyTransactions()) {
+                    return;
+                }
                 break;
 
             default:
@@ -998,6 +1000,38 @@ bool FinanceManager::deleteRecurringTransaction() {
         std::cout << "Recurring transaction deleted successfully.\n";
     } else {
         std::cout << "Recurring transaction not found.\n";
+    }
+
+    return true;
+}
+
+bool FinanceManager::generateMonthlyTransactions() {
+    if (m_recurringTransactionManager.getRecurringTransactionCount() == 0) {
+        std::cout << "No recurring transactions.\n";
+        return true;
+    }
+
+    Date asOfDate;
+    if (!readDate("Generate up to (DD/MM/YYYY): ", asOfDate)) {
+        return false;
+    }
+
+    int previousCount = m_transactionManager.getTransactionCount();
+
+    bool success = m_recurringTransactionManager.generateMonthlyTransactions(
+        asOfDate, m_transactionManager
+    );
+
+    int generatedCount =
+        m_transactionManager.getTransactionCount() - previousCount;
+    std::cout << "Generated transactions: " << generatedCount << "\n";
+
+    if (!success) {
+        std::cout << "Some recurring transactions could not be generated.\n";
+    } else if (generatedCount == 0) {
+        std::cout << "No recurring transactions are due.\n";
+    } else {
+        std::cout << "Monthly transactions generated successfully.\n";
     }
 
     return true;
