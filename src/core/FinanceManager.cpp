@@ -18,7 +18,10 @@
 FinanceManager::FinanceManager()
     : m_transactionManager(&m_walletManager,
                            &m_incomeSourceManager,
-                           &m_expenseCategoryManager) {}
+                           &m_expenseCategoryManager),
+      m_recurringTransactionManager(&m_walletManager,
+                                    &m_incomeSourceManager,
+                                    &m_expenseCategoryManager) {}
 
 // Application Control
 void FinanceManager::run() {
@@ -165,7 +168,7 @@ bool FinanceManager::handleChoice(int choice) {
             return true;
 
         case 5:
-            std::cout << "This module is not implemented yet.\n";
+            runRecurringMenu();
             return true;
 
         default:
@@ -558,6 +561,42 @@ void FinanceManager::runWalletMenu() {
     }
 }
 
+void FinanceManager::runRecurringMenu() {
+    while (true) {
+        std::cout << "\n===== RECURRING TRANSACTIONS =====\n";
+        std::cout << "1. Create Recurring Transaction\n";
+        std::cout << "2. View Recurring Transactions\n";
+        std::cout << "3. Edit Recurring Transaction\n";
+        std::cout << "4. Delete Recurring Transaction\n";
+        std::cout << "5. Generate Monthly Transactions\n";
+        std::cout << "0. Back\n";
+
+        int choice;
+
+        if (!readInt("Choose an option: ", choice)) {
+            return;
+        }
+
+        switch (choice) {
+            case 0:
+                return;
+
+            case 2:
+                m_recurringTransactionManager.viewAllRecurringTransactions();
+                break;
+
+            case 1:
+            case 3:
+            case 4:
+            case 5:
+                std::cout << "This operation is not implemented yet.\n";
+                break;
+
+            default:
+                std::cout << "Invalid option. Please try again.\n";
+        }
+    }
+}
 // Transaction Operations
 // Return false on end-of-input; otherwise continue menu navigation.
 bool FinanceManager::addIncome() {

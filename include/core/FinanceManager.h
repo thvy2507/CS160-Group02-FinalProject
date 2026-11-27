@@ -11,6 +11,7 @@
 #include "core/Date.h"
 #include "managers/ExpenseCategoryManager.h"
 #include "managers/IncomeSourceManager.h"
+#include "managers/RecurringTransactionManager.h"
 #include "managers/TransactionManager.h"
 #include "managers/WalletManager.h"
 
@@ -42,6 +43,7 @@ private:
     void runStatisticsMenu() const;
 
     void runWalletMenu();
+    void runRecurringMenu();
 
     // Transaction Operations
     bool addIncome();
@@ -53,4 +55,5 @@ private:
     IncomeSourceManager m_incomeSourceManager;
     ExpenseCategoryManager m_expenseCategoryManager;
     TransactionManager m_transactionManager;
+    RecurringTransactionManager m_recurringTransactionManager;
 };
