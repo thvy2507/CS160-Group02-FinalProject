@@ -6,13 +6,66 @@
 
 #include "managers/WalletManager.h"
 
+#include <fstream>
 #include <iostream>
 #include <limits>
+
+#include "core/BinaryIO.h"
+
+namespace {
+
+    bool writeWalletRecord(std::ostream& file, const WalletRecord& record) {
+        return BinaryIO::writeInt32(file, record.id)
+            && BinaryIO::writeUInt32(file, record.nameOffset)
+            && BinaryIO::writeUInt32(file, record.nameLength)
+            && BinaryIO::writeInt64(file, record.initialBalance)
+            && BinaryIO::writeInt64(file, record.balance)
+            && BinaryIO::writeUInt8(file, record.isDeleted);
+    }
+
+    bool readWalletRecord(std::istream& file, WalletRecord& record) {
+        return BinaryIO::readInt32(file, record.id)
+            && BinaryIO::readUInt32(file, record.nameOffset)
+            && BinaryIO::readUInt32(file, record.nameLength)
+            && BinaryIO::readInt64(file, record.initialBalance)
+            && BinaryIO::readInt64(file, record.balance)
+            && BinaryIO::readUInt8(file, record.isDeleted);
+    }
+
+    bool isValidWalletRecord(const WalletRecord& record,
+                             const std::string& name,
+                             const DynamicArray<Wallet>& wallets) {
+        if (record.id <= Wallet::INVALID_ID ||
+            record.id == std::numeric_limits<int32_t>::max() ||
+            record.isDeleted > 1 ||
+            record.initialBalance < 0 ||
+            name.empty()) {
+            return false;
+        }
+
+        for (int i = 0; i < wallets.size(); ++i) {
+            const Wallet& wallet = wallets[i];
+
+            if (wallet.getId() == record.id) {
+                return false;
+            }
+
+            if (record.isDeleted == 0 && !wallet.isDeleted() && wallet.getName() == name) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+} // namespace
 
 WalletManager::WalletManager() : m_wallets(), m_nextId(1) {}
 
 int WalletManager::addWallet(const std::string& name, Money initialBalance) {
-    if (name.empty() || initialBalance < 0 || findIndexByName(name) != -1) {
+    if (m_nextId == std::numeric_limits<int32_t>::max() ||
+        name.empty() || initialBalance < 0 ||
+        findIndexByName(name) != -1) {
         return Wallet::INVALID_ID;
     }
 
@@ -171,9 +224,107 @@ bool WalletManager::adjustBalance(int walletId, Money delta) {
 }
 
 bool WalletManager::loadFromBinary(const std::string& recordFilePath, const std::string& namePoolPath) {
-    (void)recordFilePath; (void)namePoolPath; return false;
+
+    if (recordFilePath == namePoolPath) {
+        return false;
+    }
+
+    std::ifstream recordFile(recordFilePath, std::ios::binary);
+    std::ifstream namePool(namePoolPath, std::ios::binary);
+
+    if (!recordFile || !namePool) {
+        return false;
+    }
+
+    uint64_t recordFileSize, poolSize;
+    BinaryIO::FileHeader header{};
+
+    if (!BinaryIO::getFileSize(recordFile, recordFileSize) ||
+        !BinaryIO::getFileSize(namePool, poolSize) ||
+        !BinaryIO::readHeader(recordFile, header) ||
+        !BinaryIO::validateHeader(
+            header, BinaryIO::WALLET_MAGIC,
+            BinaryIO::WALLET_RECORD_SIZE, recordFileSize,
+            std::numeric_limits<int>::max() - 1) ||
+        poolSize > std::numeric_limits<uint32_t>::max()) {
+        return false;
+    }
+
+    DynamicArray<Wallet> tempWallets(header.recordCount == 0 ?
+                                     4 : static_cast<int>(header.recordCount)
+                                     );
+
+    int maxId = 0;
+    Money totalBalance = 0;
+    for (uint32_t i = 0; i < header.recordCount; ++i) {
+        WalletRecord record{};
+        std::string name;
+
+        if (!readWalletRecord(recordFile, record) ||
+            !BinaryIO::readString(namePool, record.nameOffset, record.nameLength, poolSize, name) ||
+            !isValidWalletRecord(record, name, tempWallets)) {
+            return false;
+        }
+
+        if (record.isDeleted == 0) {
+            if ((record.balance > 0 &&
+                 totalBalance > std::numeric_limits<Money>::max() - record.balance) ||
+                (record.balance < 0 && totalBalance < std::numeric_limits<Money>::min() - record.balance)) {
+                return false;
+            }
+
+            totalBalance += record.balance;
+        }
+
+        tempWallets.add(Wallet::fromRecord(record, name));
+
+        if (record.id > maxId) {
+            maxId = record.id;
+        }
+    }
+
+    m_wallets = tempWallets;
+    m_nextId = maxId + 1;
+
+    return true;
 }
 
 bool WalletManager::saveToBinary(const std::string& recordFilePath, const std::string& namePoolPath) const {
-    (void)recordFilePath; (void)namePoolPath; return false;
+    if (recordFilePath == namePoolPath) {
+        return false;
+    }
+
+    std::ofstream recordFile(recordFilePath, std::ios::binary | std::ios::trunc);
+    std::ofstream namePool(namePoolPath, std::ios::binary | std::ios::trunc);
+
+    if (!recordFile || !namePool) {
+        return false;
+    }
+
+    uint32_t recordCount = static_cast<uint32_t>(m_wallets.size());
+
+    if (!BinaryIO::writeHeader(recordFile, BinaryIO::WALLET_MAGIC, BinaryIO::WALLET_RECORD_SIZE, recordCount)) {
+        return false;
+    }
+
+    for (int i = 0; i < m_wallets.size(); ++i) {
+        const Wallet& wallet = m_wallets[i];
+
+        uint32_t offset, length;
+
+        if (!BinaryIO::appendString(namePool, wallet.getName(), offset, length)) {
+            return false;
+        }
+
+        WalletRecord record = wallet.toRecord(offset, length);
+
+        if (!writeWalletRecord(recordFile, record)) {
+            return false;
+        }
+    }
+
+    recordFile.close();
+    namePool.close();
+
+    return static_cast<bool>(recordFile) && static_cast<bool>(namePool);
 }
