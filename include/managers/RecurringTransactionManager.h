@@ -38,8 +38,8 @@ public:
     int getRecurringTransactionCount() const;
 
     // Domain-specific Operations
-    // Creates every transaction that is due up to "today" and returns how many were created
-    int generateDueTransactions(const Date& today,
+    // Returns false if any due transaction cannot be generated.
+    bool generateMonthlyTransactions(const Date& asOfDate,
                                 TransactionManager& transactionManager);
 
 private:

@@ -134,10 +134,8 @@ void testGenerateLastDayOfMonth() {
     assert(context.recurring.createRecurringTransaction(
         makeIncomeRecurring(context, Date(31, 1, 2026), 31)));
 
-    int created = context.recurring.generateDueTransactions(Date(30, 4, 2026),
-                                                            context.transactions);
-
-    assert(created == 4);
+    assert(context.recurring.generateMonthlyTransactions(
+        Date(30, 4, 2026), context.transactions));
     assert(context.transactions.getTransactionCount() == 4);
     assert(context.transactions.getTransactionAt(0)->getDate() == Date(31, 1, 2026));
     assert(context.transactions.getTransactionAt(1)->getDate() == Date(28, 2, 2026));
@@ -155,13 +153,11 @@ void testGenerateLastDayOfMonth() {
 void testGenerateLeapYear() {
     RecurringTestContext context;
 
-    assert(context.recurring.createRecurringTransaction(
-        makeIncomeRecurring(context, Date(31, 1, 2028), 31)));
+    assert(context.recurring.createRecurringTransaction(makeIncomeRecurring(context, Date(31, 1, 2028), 31)));
 
-    int created = context.recurring.generateDueTransactions(Date(29, 2, 2028),
-                                                            context.transactions);
+    assert(context.recurring.generateMonthlyTransactions(Date(29, 2, 2028), context.transactions));
 
-    assert(created == 2);
+    assert(context.transactions.getTransactionCount() == 2);
     assert(context.transactions.getTransactionAt(1)->getDate() == Date(29, 2, 2028));
 
     std::cout << "PASS: Use February 29 in a leap year\n";
@@ -170,21 +166,18 @@ void testGenerateLeapYear() {
 void testPreventDuplicateGeneration() {
     RecurringTestContext context;
 
-    assert(context.recurring.createRecurringTransaction(
-        makeIncomeRecurring(context, Date(5, 1, 2026), 5)));
+    assert(context.recurring.createRecurringTransaction(makeIncomeRecurring(context, Date(5, 1, 2026), 5)));
 
-    assert(context.recurring.generateDueTransactions(Date(5, 3, 2026),
-                                                     context.transactions) == 3);
+    assert(context.recurring.generateMonthlyTransactions(Date(5, 3, 2026), context.transactions));
+    assert(context.transactions.getTransactionCount() == 3);
 
     // Running again with the same date must not create anything
-    assert(context.recurring.generateDueTransactions(Date(5, 3, 2026),
-                                                     context.transactions) == 0);
+    assert(context.recurring.generateMonthlyTransactions(Date(5, 3, 2026), context.transactions));
     assert(context.transactions.getTransactionCount() == 3);
     assert(context.wallets.getWalletBalance(context.walletId) == 103000);
 
     // A later date only creates the new month
-    assert(context.recurring.generateDueTransactions(Date(5, 4, 2026),
-                                                     context.transactions) == 1);
+    assert(context.recurring.generateMonthlyTransactions(Date(5, 4, 2026), context.transactions));
     assert(context.transactions.getTransactionCount() == 4);
 
     std::cout << "PASS: Prevent duplicate generation\n";
@@ -194,15 +187,14 @@ void testStartDate() {
     RecurringTestContext context;
 
     // Start on 20/01 with day 5: the occurrence on 05/01 is before the start date
-    assert(context.recurring.createRecurringTransaction(
-        makeIncomeRecurring(context, Date(20, 1, 2026), 5)));
+    assert(context.recurring.createRecurringTransaction(makeIncomeRecurring(context, Date(20, 1, 2026), 5)));
 
     // Today is before the start date, so nothing is due
-    assert(context.recurring.generateDueTransactions(Date(1, 1, 2026),
-                                                     context.transactions) == 0);
+    assert(context.recurring.generateMonthlyTransactions(Date(1, 1, 2026), context.transactions));
+    assert(context.transactions.getTransactionCount() == 0);
 
-    assert(context.recurring.generateDueTransactions(Date(31, 3, 2026),
-                                                     context.transactions) == 2);
+    assert(context.recurring.generateMonthlyTransactions(Date(31, 3, 2026), context.transactions));
+    assert(context.transactions.getTransactionCount() == 2);
     assert(context.transactions.getTransactionAt(0)->getDate() == Date(5, 2, 2026));
     assert(context.transactions.getTransactionAt(1)->getDate() == Date(5, 3, 2026));
 
@@ -217,8 +209,7 @@ void testEndDate() {
     limited.setEndDate(Date(5, 3, 2026));
     assert(context.recurring.createRecurringTransaction(limited));
 
-    assert(context.recurring.generateDueTransactions(Date(31, 12, 2026),
-                                                     context.transactions) == 3);
+    assert(context.recurring.generateMonthlyTransactions(Date(31, 12, 2026), context.transactions));
     assert(context.transactions.getTransactionCount() == 3);
 
     const RecurringTransaction* record = context.recurring.getRecurringTransactionById(1);
@@ -234,8 +225,7 @@ void testInactiveRecurring() {
     paused.setActive(false);
     assert(context.recurring.createRecurringTransaction(paused));
 
-    assert(context.recurring.generateDueTransactions(Date(31, 12, 2026),
-                                                     context.transactions) == 0);
+    assert(context.recurring.generateMonthlyTransactions(Date(31, 12, 2026), context.transactions));
     assert(context.transactions.getTransactionCount() == 0);
 
     std::cout << "PASS: Skip inactive recurring transactions\n";
@@ -244,36 +234,70 @@ void testInactiveRecurring() {
 void testGenerationRetryAfterFailure() {
     RecurringTestContext context;
 
-    // Wallet has 100000: January works, February fails (only 40000 left)
+    // January succeeds, but February fails due to insufficient funds.
     assert(context.recurring.createRecurringTransaction(
         makeExpenseRecurring(context, 60000, Date(1, 1, 2026), 1)));
 
-    assert(context.recurring.generateDueTransactions(Date(31, 3, 2026),
-                                                     context.transactions) == 1);
-    assert(context.wallets.getWalletBalance(context.walletId) == 40000);
-    assert(context.recurring.getRecurringTransactionById(1)->getLastGeneratedDate()
-           == Date(1, 1, 2026));
+    assert(!context.recurring.generateMonthlyTransactions(
+        Date(31, 3, 2026), context.transactions));
 
-    // After adding money, the failed month is generated again
+    assert(context.transactions.getTransactionCount() == 1);
+    assert(context.wallets.getWalletBalance(context.walletId) == 40000);
+
+    assert(context.recurring.getRecurringTransactionById(1)
+        ->getLastGeneratedDate() == Date(1, 1, 2026));
+
+    // Retry the failed occurrences after depositing more money.
     assert(context.wallets.deposit(context.walletId, 100000));
-    assert(context.recurring.generateDueTransactions(Date(31, 3, 2026),
-                                                     context.transactions) == 2);
+
+    assert(context.recurring.generateMonthlyTransactions(
+        Date(31, 3, 2026), context.transactions));
+
     assert(context.transactions.getTransactionCount() == 3);
     assert(context.wallets.getWalletBalance(context.walletId) == 20000);
 
     std::cout << "PASS: Retry generation after a failed month\n";
 }
 
+void testPartialGenerationFailure() {
+    RecurringTestContext context;
+
+    // This expense exceeds the available wallet balance.
+    assert(context.recurring.createRecurringTransaction(makeExpenseRecurring(context, 200000, Date(1, 1, 2026), 1)));
+
+    // This income should still be generated.
+    assert(context.recurring.createRecurringTransaction(makeIncomeRecurring(context, Date(1, 1, 2026), 1)));
+
+    assert(!context.recurring.generateMonthlyTransactions(Date(1, 1, 2026), context.transactions));
+
+    assert(context.transactions.getTransactionCount() == 1);
+    assert(context.wallets.getWalletBalance(context.walletId) == 101000);
+
+    const RecurringTransaction* expense = context.recurring.getRecurringTransactionById(1);
+
+    const RecurringTransaction* income = context.recurring.getRecurringTransactionById(2);
+
+    assert(expense != nullptr);
+    assert(income != nullptr);
+
+    assert(!expense->hasLastGeneratedDate());
+    assert(income->hasLastGeneratedDate());
+    assert(income->getLastGeneratedDate() == Date(1, 1, 2026));
+
+    assert(context.transactions.getTransactionAt(0)->getType() == TransactionType::INCOME);
+
+    std::cout << "PASS: Continue generation after individual failure\n";
+}
+
 void testEditRecurring() {
     RecurringTestContext context;
 
-    assert(context.recurring.createRecurringTransaction(
-        makeIncomeRecurring(context, Date(5, 1, 2026), 5)));
-    assert(context.recurring.generateDueTransactions(Date(5, 2, 2026),
-                                                     context.transactions) == 2);
+    assert(context.recurring.createRecurringTransaction(makeIncomeRecurring(context, Date(5, 1, 2026), 5)));
 
-    RecurringTransaction raise(0, TransactionType::INCOME, 2000, "Raise",
-                               context.walletId, context.sourceId, Date(5, 1, 2026), 5);
+    assert(context.recurring.generateMonthlyTransactions(Date(5, 2, 2026), context.transactions));
+    assert(context.transactions.getTransactionCount() == 2);
+
+    RecurringTransaction raise(0, TransactionType::INCOME, 2000, "Raise", context.walletId, context.sourceId, Date(5, 1, 2026), 5);
     assert(context.recurring.editRecurringTransaction(1, raise));
 
     const RecurringTransaction* record = context.recurring.getRecurringTransactionById(1);
@@ -284,12 +308,12 @@ void testEditRecurring() {
     // Editing keeps the last generated date, so old months are not generated again
     assert(record->hasLastGeneratedDate());
     assert(record->getLastGeneratedDate() == Date(5, 2, 2026));
-    assert(context.recurring.generateDueTransactions(Date(5, 2, 2026),
-                                                     context.transactions) == 0);
+
+    assert(context.recurring.generateMonthlyTransactions(Date(5, 2, 2026), context.transactions));
+    assert(context.transactions.getTransactionCount() == 2);
 
     // Invalid edits change nothing
-    RecurringTransaction invalid(0, TransactionType::INCOME, 0, "", context.walletId,
-                                 context.sourceId, Date(5, 1, 2026), 5);
+    RecurringTransaction invalid(0, TransactionType::INCOME, 0, "", context.walletId, context.sourceId, Date(5, 1, 2026), 5);
     assert(!context.recurring.editRecurringTransaction(1, invalid));
     assert(!context.recurring.editRecurringTransaction(999, raise));
     assert(context.recurring.getRecurringTransactionById(1)->getAmount() == 2000);
@@ -334,6 +358,7 @@ int main() {
     testEndDate();
     testInactiveRecurring();
     testGenerationRetryAfterFailure();
+    testPartialGenerationFailure();
     testEditRecurring();
     testViewAndDeleteRecurring();
 

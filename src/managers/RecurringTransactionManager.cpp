@@ -185,47 +185,56 @@ bool addGeneratedTransaction(const RecurringTransaction& recurring,
     return transactionManager.addExpense(expense);
 }
 
-// Goes month by month and generates every due transaction of ONE recurring item.
-// Returns how many transactions were created
-int generateForOne(RecurringTransaction& recurring, const Date& today,
-                   TransactionManager& transactionManager) {
+// Generates all due occurrences for one recurring transaction.
+// Returns false if any occurrence cannot be generated.
+bool generateForOne(RecurringTransaction& recurring, const Date& asOfDate, TransactionManager& transactionManager) {
     if (!recurring.isActive()) {
-        return 0;
+        return true;
     }
 
-    // Start at the start month, or at the month after the last generated one
     int month = recurring.getStartDate().getMonth();
     int year = recurring.getStartDate().getYear();
+
     if (recurring.hasLastGeneratedDate()) {
-        month = recurring.getLastGeneratedDate().getMonth();
-        year = recurring.getLastGeneratedDate().getYear();
+        const Date lastGenerated = recurring.getLastGeneratedDate();
+
+        if (lastGenerated >= asOfDate || (lastGenerated.getMonth() == asOfDate.getMonth() && lastGenerated.getYear() == asOfDate.getYear())) {
+            return true;
+        }
+
+        month = lastGenerated.getMonth();
+        year = lastGenerated.getYear();
+
         moveToNextMonth(month, year);
     }
 
-    int generatedCount = 0;
     while (true) {
         const Date occurrence = makeOccurrenceDate(recurring.getDayOfMonth(), month, year);
 
-        // Stop when the date is in the future or after the end date
-        if (occurrence > today) {
+        if (occurrence > asOfDate) {
             break;
         }
+
         if (recurring.hasEndDate() && occurrence > recurring.getEndDate()) {
             break;
         }
 
         if (shouldGenerate(recurring, occurrence)) {
-            // On failure (e.g. not enough money) stop and keep the last good date,
-            // so the failed month can be tried again next time
             if (!addGeneratedTransaction(recurring, occurrence, transactionManager)) {
-                break;
+                return false;
             }
+
             recurring.setLastGeneratedDate(occurrence);
-            ++generatedCount;
         }
+
+        if (month == asOfDate.getMonth() && year == asOfDate.getYear()) {
+            break;
+        }
+
         moveToNextMonth(month, year);
     }
-    return generatedCount;
+
+    return true;
 }
 
 }  // namespace
@@ -332,14 +341,21 @@ int RecurringTransactionManager::getRecurringTransactionCount() const {
 }
 
 // Domain-specific Operations
-int RecurringTransactionManager::generateDueTransactions(
-    const Date& today, TransactionManager& transactionManager) {
-    int totalGenerated = 0;
-    for (int i = 0; i < m_recurringTransactions.size(); ++i) {
-        totalGenerated += generateForOne(m_recurringTransactions[i], today,
-                                         transactionManager);
+bool RecurringTransactionManager::generateMonthlyTransactions(
+    const Date& asOfDate, TransactionManager& transactionManager) {
+    if (!asOfDate.isValid()) {
+        return false;
     }
-    return totalGenerated;
+
+    bool success = true;
+
+    for (int i = 0; i < m_recurringTransactions.size(); ++i) {
+        if (!generateForOne(m_recurringTransactions[i], asOfDate, transactionManager)) {
+            success = false;
+        }
+    }
+
+    return success;
 }
 
 // Private Helpers
