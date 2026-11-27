@@ -2,7 +2,8 @@
  * @file RecurringTransaction.cpp
  * @author TV3
  * @brief Implements the monthly recurring transaction model
- * @note Week 3 - stores the schedule only; RecurringTransactionManager validates and generates
+ * @note Sprint 3 - stores schedule and generation state.
+ * RecurringTransactionManager handles validation and generation.
  */
 
 #include "models/RecurringTransaction.h"

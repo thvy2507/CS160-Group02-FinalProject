@@ -1,8 +1,9 @@
 /**
  * @file RecurringTransactionManager.cpp
  * @author TV3
- * @brief Manages monthly recurring transactions and generates the due ones
- * @note Week 3 - in-memory only; binary persistence is planned for a later week
+ * @brief Manages recurring transactions and monthly generation.
+ * @note Sprint 3 - in-memory implementation with duplicate prevention
+ * and retry support for failed generation.
  */
 
 #include "managers/RecurringTransactionManager.h"
@@ -27,7 +28,7 @@ const int MONTHS_PER_YEAR = 12;
 const int DAYS_IN_MONTH[MONTHS_PER_YEAR] = {31, 28, 31, 30, 31, 30,
                                             31, 31, 30, 31, 30, 31};
 
-// ---------- Date helpers ----------
+// Date Helpers
 
 // Returns how many days a month has (February depends on the leap year)
 int getDaysInMonth(int month, int year) {
@@ -55,7 +56,7 @@ void moveToNextMonth(int& month, int& year) {
     }
 }
 
-// ---------- Validation ----------
+// Validation Helpers
 
 // Checks the amount, day of month and dates (no data is modified)
 bool hasValidScheduleFields(const RecurringTransaction& recurring) {
@@ -102,7 +103,7 @@ bool hasValidReferences(const RecurringTransaction& recurring,
     return expenseCategoryManager != nullptr && expenseCategoryManager->exists(referenceId);
 }
 
-// ---------- Copy and print ----------
+// Copy & Output Helpers
 
 // Makes a clean copy with the given ID.
 // The last generated date is NOT copied here; the caller decides what to keep
@@ -152,7 +153,7 @@ void printRecurring(const RecurringTransaction& recurring) {
     std::cout << " | " << (recurring.isActive() ? "Active" : "Inactive") << "\n";
 }
 
-// ---------- Generation helpers ----------
+// Generation Helpers
 
 // A date is generated only if it is not before the start date
 // and it is after the last generated date (this prevents duplicates)
@@ -272,13 +273,24 @@ bool RecurringTransactionManager::createRecurringTransaction(
     return true;
 }
 
-bool RecurringTransactionManager::deleteRecurringTransaction(int id) {
-    const int index = findRecurringIndex(id);
-    if (index == NOT_FOUND) {
+void RecurringTransactionManager::viewAllRecurringTransactions() const {
+    if (m_recurringTransactions.empty()) {
+        std::cout << "No recurring transactions.\n";
+        return;
+    }
+
+    for (int i = 0; i < m_recurringTransactions.size(); ++i) {
+        printRecurring(m_recurringTransactions[i]);
+    }
+}
+
+bool RecurringTransactionManager::viewRecurringTransaction(int id) const {
+    const RecurringTransaction* recurring = getRecurringTransactionById(id);
+    if (recurring == nullptr) {
         return false;
     }
 
-    m_recurringTransactions.remove(index);
+    printRecurring(*recurring);
     return true;
 }
 
@@ -305,24 +317,13 @@ bool RecurringTransactionManager::editRecurringTransaction(
     return true;
 }
 
-void RecurringTransactionManager::viewAllRecurringTransactions() const {
-    if (m_recurringTransactions.empty()) {
-        std::cout << "No recurring transactions.\n";
-        return;
-    }
-
-    for (int i = 0; i < m_recurringTransactions.size(); ++i) {
-        printRecurring(m_recurringTransactions[i]);
-    }
-}
-
-bool RecurringTransactionManager::viewRecurringTransaction(int id) const {
-    const RecurringTransaction* recurring = getRecurringTransactionById(id);
-    if (recurring == nullptr) {
+bool RecurringTransactionManager::deleteRecurringTransaction(int id) {
+    const int index = findRecurringIndex(id);
+    if (index == NOT_FOUND) {
         return false;
     }
 
-    printRecurring(*recurring);
+    m_recurringTransactions.remove(index);
     return true;
 }
 

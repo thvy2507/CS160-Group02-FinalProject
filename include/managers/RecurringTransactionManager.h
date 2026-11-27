@@ -2,8 +2,9 @@
  * @file RecurringTransactionManager.h
  * @author TV3
  * @brief Interface for managing monthly recurring transactions
- * @note Week 1 - declarations only. Generation is planned for a later week
- * @note Week 3 - adds generateDueTransactions(); the TransactionManager is passed in by the caller
+ * @note Sprint 3 - supports in-memory recurring transaction management
+ * and monthly generation through TransactionManager.
+ * Binary persistence is deferred to a later sprint.
  */
 
 #ifndef RECURRING_TRANSACTION_MANAGER_H
@@ -28,10 +29,10 @@ public:
 
     // CRUD Operations
     bool createRecurringTransaction(const RecurringTransaction& recurring);
-    bool deleteRecurringTransaction(int id);
-    bool editRecurringTransaction(int id, const RecurringTransaction& updated);
     void viewAllRecurringTransactions() const;
     bool viewRecurringTransaction(int id) const;
+    bool editRecurringTransaction(int id, const RecurringTransaction& updated);
+    bool deleteRecurringTransaction(int id);
 
     // Search & Access
     const RecurringTransaction* getRecurringTransactionById(int id) const;

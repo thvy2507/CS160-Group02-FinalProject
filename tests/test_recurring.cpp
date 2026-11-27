@@ -17,6 +17,7 @@
 #include "models/Income.h"
 #include "models/RecurringTransaction.h"
 
+// Test Context
 // Each recurring test creates its own context, so the tests do not affect each other
 struct RecurringTestContext {
     WalletManager wallets;
@@ -42,6 +43,7 @@ struct RecurringTestContext {
     }
 };
 
+// Test Helpers
 // Income of 1000 VND on the given day of every month
 RecurringTransaction makeIncomeRecurring(const RecurringTestContext& context,
                                          const Date& startDate, int dayOfMonth) {
@@ -63,6 +65,7 @@ void checkRejectedRecurring(const RecurringTestContext& context, bool success) {
     assert(context.recurring.getRecurringTransactionCount() == 0);
 }
 
+// Recurring Transaction Tests
 void testCreateRecurring() {
     RecurringTestContext context;
 
