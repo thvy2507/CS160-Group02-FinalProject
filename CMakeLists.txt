@@ -24,6 +24,7 @@ add_executable(PersonalFinanceManager
     src/managers/IncomeSourceManager.cpp
     src/managers/ExpenseCategoryManager.cpp
     src/managers/TransactionManager.cpp
+    src/managers/RecurringTransactionManager.cpp
 
     # Statistics
     src/statistics/StatisticsManager.cpp
