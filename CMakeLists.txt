@@ -17,6 +17,7 @@ add_executable(PersonalFinanceManager
     src/models/Transaction.cpp
     src/models/Income.cpp
     src/models/Expense.cpp
+    src/models/RecurringTransaction.cpp
 
     # Managers
     src/managers/WalletManager.cpp
