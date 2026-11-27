@@ -1,3 +1,9 @@
+/**
+ * @file IncomeSource.h
+ * @author TV2 (Khoi)
+ * @brief Declares the income source model and binary record structure.
+ */
+
 #ifndef MODELS_INCOME_SOURCE_H
 #define MODELS_INCOME_SOURCE_H
 
@@ -12,29 +18,39 @@ struct IncomeSourceRecord {
     uint8_t isDeleted;
 };
 
-static_assert(std::is_trivially_copyable_v<IncomeSourceRecord>, "Must be trivially copyable");
+static_assert(std::is_trivially_copyable_v<IncomeSourceRecord>,
+              "IncomeSourceRecord must be trivially copyable for binary file I/O.");
 
 class IncomeSource {
 public:
+    // Constants
     static constexpr int INVALID_ID = 0;
+
+    // Constructors
     IncomeSource();
     IncomeSource(int id, const std::string& name, bool isDeleted = false);
 
+    // Validation
+    bool isValid() const;
+
+    // Getters
     int getId() const;
     const std::string& getName() const;
     bool isDeleted() const;
-    bool isValid() const;
 
+    // Setters
     bool setName(const std::string& name);
     void setDeleted(bool deleted);
 
+    // Binary Record Conversion
     IncomeSourceRecord toRecord(uint32_t nameOffset, uint32_t nameLength) const;
     static IncomeSource fromRecord(const IncomeSourceRecord& record, const std::string& resolvedName);
 
 private:
-    int id_;
-    std::string name_;
-    bool isDeleted_;
+    // Private Members
+    int m_id;
+    std::string m_name;
+    bool m_isDeleted;
 };
 
-#endif
+#endif // MODELS_INCOME_SOURCE_H
