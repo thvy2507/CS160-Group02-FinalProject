@@ -120,6 +120,10 @@ void testRejectInvalidRecurring() {
     badEndDate.setEndDate(Date(1, 1, 2026));
     checkRejectedRecurring(context, context.recurring.createRecurringTransaction(badEndDate));
 
+    RecurringTransaction invalidType(0, static_cast<TransactionType>(99), 1000, "", context.walletId, context.categoryId, start, 5);
+
+    checkRejectedRecurring(context, context.recurring.createRecurringTransaction(invalidType));
+
     std::cout << "PASS: Reject invalid recurring transactions\n";
 }
 
@@ -288,6 +292,13 @@ void testEditRecurring() {
                                  context.sourceId, Date(5, 1, 2026), 5);
     assert(!context.recurring.editRecurringTransaction(1, invalid));
     assert(!context.recurring.editRecurringTransaction(999, raise));
+    assert(context.recurring.getRecurringTransactionById(1)->getAmount() == 2000);
+
+    RecurringTransaction invalidType(0, static_cast<TransactionType>(99), 2000, "Invalid type", context.walletId, context.categoryId, Date(5, 1, 2026), 5);
+
+    assert(!context.recurring.editRecurringTransaction(1, invalidType));
+
+    assert(context.recurring.getRecurringTransactionById(1)->getType() == TransactionType::INCOME);
     assert(context.recurring.getRecurringTransactionById(1)->getAmount() == 2000);
 
     std::cout << "PASS: Edit recurring transaction\n";
