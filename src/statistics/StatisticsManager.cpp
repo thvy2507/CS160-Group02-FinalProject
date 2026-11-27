@@ -2,23 +2,28 @@
  * @file StatisticsManager.cpp
  * @author TV4
  * @brief Provides financial reports and statistics.
- * @note Sprint 2 implements date-range summaries.
- * Other reports are deferred to later sprints.
+ * @note Supports date-range summaries for all wallets or one active wallet.
  */
 
 #include "statistics/StatisticsManager.h"
 
 #include <limits>
+#include <optional>
 
 #include "core/Date.h"
+#include "core/DynamicArray.h"
 #include "managers/TransactionManager.h"
 #include "models/Transaction.h"
+#include "models/Wallet.h"
 
-// Statistics Operations
-bool StatisticsManager::calculateSummary(
+namespace {
+
+// Statistics Helpers
+bool calculateSummaryForRange(
     const TransactionManager& transactions,
     const Date& start, const Date& end,
-    StatisticsResult& result) const {
+    StatisticsResult& result,
+    std::optional<int> walletIdFilter) {
     if (!start.isValid() || !end.isValid() || start > end) {
         return false;
     }
@@ -32,7 +37,16 @@ bool StatisticsManager::calculateSummary(
             return false;
         }
 
-        Date date = transaction->getDate();
+        if (walletIdFilter && transaction->getWalletId() != *walletIdFilter) {
+            continue;
+        }
+
+        const Date date = transaction->getDate();
+
+        if (!date.isValid()) {
+            return false;
+        }
+
         if (date < start || date > end) {
             continue;
         }
@@ -62,9 +76,33 @@ bool StatisticsManager::calculateSummary(
     return true;
 }
 
+} // namespace
+
+// Statistics Operations
+bool StatisticsManager::calculateSummary(
+    const TransactionManager& transactions,
+    const Date& start, const Date& end,
+    StatisticsResult& result) const {
+    return calculateSummaryForRange(
+        transactions, start, end, result, std::nullopt);
+}
+
 bool StatisticsManager::calculateWalletSummary(
-    const TransactionManager&, const Date&, const Date&, int,
-    const DynamicArray<Wallet>&, StatisticsResult&) const {
+    const TransactionManager& transactions,
+    const Date& start, const Date& end, int walletId,
+    const DynamicArray<Wallet>& wallets, StatisticsResult& result) const {
+    if (walletId <= Wallet::INVALID_ID) {
+        return false;
+    }
+
+    for (int i = 0; i < wallets.getSize(); ++i) {
+        const Wallet& wallet = wallets[i];
+        if (wallet.getId() == walletId && !wallet.isDeleted()) {
+            return calculateSummaryForRange(
+                transactions, start, end, result, walletId);
+        }
+    }
+
     return false;
 }
 

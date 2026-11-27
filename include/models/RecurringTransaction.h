@@ -2,7 +2,7 @@
  * @file RecurringTransaction.h
  * @author TV3
  * @brief Template for a monthly recurring income or expense
- * @note Week 1 - interface only. Generation is not implemented yet
+ * @note Sprint 3 - stores monthly schedules and generation state.
  */
 
 #ifndef RECURRING_TRANSACTION_H
@@ -75,6 +75,5 @@ private:
     Date m_lastGeneratedDate;
     bool m_isActive;
 };
-
 
 #endif
