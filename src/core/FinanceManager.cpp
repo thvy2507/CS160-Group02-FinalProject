@@ -706,7 +706,17 @@ void FinanceManager::runRecurringMenu() {
                 break;
 
             case 3:
+                if (!editRecurringTransaction()) {
+                    return;
+                }
+                break;
+
             case 4:
+                if (!deleteRecurringTransaction()) {
+                    return;
+                }
+                break;
+
             case 5:
                 std::cout << "This operation is not implemented yet.\n";
                 break;
@@ -917,6 +927,77 @@ bool FinanceManager::createRecurringTransaction() {
         std::cout << "Recurring transaction created successfully.\n";
     } else {
         std::cout << "Unable to create recurring transaction.\n";
+    }
+
+    return true;
+}
+
+bool FinanceManager::editRecurringTransaction() {
+    if (m_recurringTransactionManager.getRecurringTransactionCount() == 0) {
+        std::cout << "No recurring transactions.\n";
+        return true;
+    }
+
+    m_recurringTransactionManager.viewAllRecurringTransactions();
+
+    int id;
+    if (!readInt("Recurring transaction ID: ", id)) {
+        return false;
+    }
+
+    const RecurringTransaction* existing = m_recurringTransactionManager.getRecurringTransactionById(id);
+    if (!existing) {
+        std::cout << "Recurring transaction not found.\n";
+        return true;
+    }
+
+    if (m_walletManager.getActiveWalletCount() == 0) {
+        std::cout << "Please create a wallet first.\n";
+        return true;
+    }
+
+    RecurringTransaction updated;
+    if (!readRecurringDetails(existing->getType(), updated)) {
+        return static_cast<bool>(std::cin);
+    }
+
+    int activeChoice;
+    if (!readInt("Status (1. Active, 0. Inactive): ", activeChoice)) {
+        return false;
+    }
+
+    if (activeChoice != 0 && activeChoice != 1) {
+        std::cout << "Invalid status.\n";
+        return true;
+    }
+
+    updated.setActive(activeChoice == 1);
+    if (m_recurringTransactionManager.editRecurringTransaction(id, updated)) {
+        std::cout << "Recurring transaction updated successfully.\n";
+    } else {
+        std::cout << "Unable to update recurring transaction.\n";
+    }
+
+    return true;
+}
+
+bool FinanceManager::deleteRecurringTransaction() {
+    if (m_recurringTransactionManager.getRecurringTransactionCount() == 0) {
+        std::cout << "No recurring transactions.\n";
+        return true;
+    }
+
+    m_recurringTransactionManager.viewAllRecurringTransactions();
+
+    int id;
+    if (!readInt("Recurring transaction ID: ", id)) {
+        return false;
+    }
+
+    if (m_recurringTransactionManager.deleteRecurringTransaction(id)) {
+        std::cout << "Recurring transaction deleted successfully.\n";
+    } else {
+        std::cout << "Recurring transaction not found.\n";
     }
 
     return true;
