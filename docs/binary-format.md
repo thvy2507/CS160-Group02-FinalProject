@@ -571,17 +571,30 @@ bool generateMonthlyTransactions(const Date& asOfDate, TransactionManager& trans
 **Generation Contract**
 
 - Evaluate monthly schedules using the supplied `asOfDate`.
+- Generate all due monthly occurrences, including missed months.
+- Use the last day of the month when the scheduled day exceeds the number of days in that month.
+- Respect start dates, optional end dates, and active status.
 - Generate actual transactions through `addIncome()` or `addExpense()`.
 - Do not independently deposit or withdraw wallet balances.
 - Prevent duplicate generation within the same month.
 - Update the last generated date only after successful transaction creation.
+- Preserve generation history when editing recurring schedules.
+- Preserve existing transactions when deleting recurring schedules.
 - Return `true` when all due transactions are generated successfully or when no transactions are due.
 - Return `false` when at least one due transaction cannot be generated.
 - Preserve successfully generated transactions when another generation fails.
+- Stop processing the failed schedule while continuing to evaluate other schedules.
+- Allow failed occurrences to be retried during subsequent generation calls.
 
-FinanceManager coordinates generation through this interface.
+**CLI Integration**
 
-Missed-month handling, atomic batch generation, and full cross-session duplicate prevention are outside the Sprint 3 scope.
+FinanceManager provides recurring transaction creation, viewing, editing, deletion, and manual monthly generation.
+
+The user supplies an `asOfDate` when requesting generation. FinanceManager reports the number of successfully generated transactions and whether any generation failures occurred.
+
+Recurring schedules and generation state are currently maintained in memory.
+
+Missed-month handling and in-session duplicate prevention are implemented in Sprint 3. Atomic batch generation, recurring persistence, and full cross-session duplicate prevention remain deferred.
 
 ### 12.3. Statistics
 
