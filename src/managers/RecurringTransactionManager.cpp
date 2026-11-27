@@ -8,6 +8,7 @@
 #include "managers/RecurringTransactionManager.h"
 
 #include <iostream>
+#include <limits>
 
 #include "managers/ExpenseCategoryManager.h"
 #include "managers/IncomeSourceManager.h"
@@ -58,6 +59,10 @@ void moveToNextMonth(int& month, int& year) {
 
 // Checks the amount, day of month and dates (no data is modified)
 bool hasValidScheduleFields(const RecurringTransaction& recurring) {
+    if (recurring.getType() != TransactionType::INCOME && recurring.getType() != TransactionType::EXPENSE) {
+        return false;
+    }
+
     if (recurring.getAmount() <= 0) {
         return false;
     }
@@ -241,7 +246,8 @@ RecurringTransactionManager::~RecurringTransactionManager() {}
 bool RecurringTransactionManager::createRecurringTransaction(
     const RecurringTransaction& recurring) {
     // Validate first, so a failed call changes nothing
-    if (!hasValidScheduleFields(recurring) ||
+    if (m_nextId == std::numeric_limits<int>::max() ||
+        !hasValidScheduleFields(recurring) ||
         !hasValidReferences(recurring, m_walletManager, m_incomeSourceManager,
                             m_expenseCategoryManager)) {
         return false;
