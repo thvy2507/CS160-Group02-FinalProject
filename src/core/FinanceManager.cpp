@@ -134,6 +134,120 @@ bool FinanceManager::readDate(const std::string& prompt, Date& date) const {
     }
 }
 
+bool FinanceManager::readRecurringReferences(
+    TransactionType type, int& walletId,
+    int& sourceOrCategoryId) const {
+
+    if (type == TransactionType::INCOME && m_incomeSourceManager.getActiveCount() == 0) {
+        std::cout << "Please create an income source first.\n";
+        return false;
+    }
+
+    if (type == TransactionType::EXPENSE && m_expenseCategoryManager.getActiveCount() == 0) {
+        std::cout << "Please create an expense category first.\n";
+        return false;
+    }
+
+    m_walletManager.viewAllWallets();
+
+    if (!readInt("Wallet ID: ", walletId)) {
+        return false;
+    }
+
+    if (!m_walletManager.exists(walletId)) {
+        std::cout << "Wallet not found.\n";
+        return false;
+    }
+
+    if (type == TransactionType::INCOME) {
+        m_incomeSourceManager.viewAllIncomeSources();
+
+        if (!readInt("Income source ID: ", sourceOrCategoryId)) {
+            return false;
+        }
+
+        if (!m_incomeSourceManager.exists(sourceOrCategoryId)) {
+            std::cout << "Income source not found.\n";
+            return false;
+        }
+    } else {
+        m_expenseCategoryManager.viewAllExpenseCategories();
+
+        if (!readInt("Expense category ID: ", sourceOrCategoryId)) {
+            return false;
+        }
+
+        if (!m_expenseCategoryManager.exists(sourceOrCategoryId)) {
+            std::cout << "Expense category not found.\n";
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool FinanceManager::readRecurringDetails(
+    TransactionType type, RecurringTransaction& recurring) const {
+
+    int walletId, sourceOrCategoryId, dayOfMonth;
+    long long amount;
+    Date startDate;
+    std::string description;
+    int hasEndDate;
+
+    if (!readRecurringReferences(type, walletId, sourceOrCategoryId)) {
+        return false;
+    }
+
+    if (!readMoney("Amount (VND): ", amount)) {
+        return false;
+    }
+
+    if (amount <= 0) {
+        std::cout << "Amount must be greater than zero.\n";
+        return false;
+    }
+
+    if (!readDate("Start date (DD/MM/YYYY): ", startDate) || !readInt("Day of month (1-31): ", dayOfMonth)) {
+        return false;
+    }
+
+    if (dayOfMonth < MIN_DAY_OF_MONTH || dayOfMonth > MAX_DAY_OF_MONTH) {
+        std::cout << "Invalid day of month.\n";
+        return false;
+    }
+
+    if (!readText("Description: ", description, true) || !readInt("Set end date? (1. Yes, 0. No): ", hasEndDate)) {
+        return false;
+    }
+
+    if (hasEndDate != 0 && hasEndDate != 1) {
+        std::cout << "Invalid option.\n";
+        return false;
+    }
+
+    RecurringTransaction candidate(RecurringTransaction::INVALID_ID,
+                                   type, amount, description, walletId,
+                                   sourceOrCategoryId, startDate, dayOfMonth);
+
+    if (hasEndDate == 1) {
+        Date endDate;
+        if (!readDate("End date (DD/MM/YYYY): ", endDate)) {
+            return false;
+        }
+
+        if (endDate < startDate) {
+            std::cout << "End date cannot be before start date.\n";
+            return false;
+        }
+
+        candidate.setEndDate(endDate);
+    }
+
+    recurring = candidate;
+    return true;
+}
+
 // Menu & Navigation
 void FinanceManager::displayMenu() const {
     std::cout << "\n===== PERSONAL FINANCE MANAGER =====\n";
@@ -581,11 +695,16 @@ void FinanceManager::runRecurringMenu() {
             case 0:
                 return;
 
+            case 1:
+                if (!createRecurringTransaction()) {
+                    return;
+                }
+                break;
+
             case 2:
                 m_recurringTransactionManager.viewAllRecurringTransactions();
                 break;
 
-            case 1:
             case 3:
             case 4:
             case 5:
@@ -763,4 +882,42 @@ void FinanceManager::viewTransactions(TransactionType type) const {
     if (!found) {
         std::cout << "No transactions found.\n";
     }
+}
+
+// Recurring Transaction Operations
+bool FinanceManager::createRecurringTransaction() {
+    if (m_walletManager.getActiveWalletCount() == 0) {
+        std::cout << "Please create a wallet first.\n";
+        return true;
+    }
+
+    int typeChoice;
+
+    std::cout << "1. Income\n";
+    std::cout << "2. Expense\n";
+
+    if (!readInt("Transaction type: ", typeChoice)) {
+        return false;
+    }
+
+    if (typeChoice != 1 && typeChoice != 2) {
+        std::cout << "Invalid transaction type.\n";
+        return true;
+    }
+
+    TransactionType type = (typeChoice == 1) ? TransactionType::INCOME : TransactionType::EXPENSE;
+
+    RecurringTransaction recurring;
+
+    if (!readRecurringDetails(type, recurring)) {
+        return static_cast<bool>(std::cin);
+    }
+
+    if (m_recurringTransactionManager.createRecurringTransaction(recurring)) {
+        std::cout << "Recurring transaction created successfully.\n";
+    } else {
+        std::cout << "Unable to create recurring transaction.\n";
+    }
+
+    return true;
 }

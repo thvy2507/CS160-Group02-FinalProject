@@ -29,6 +29,8 @@ private:
     bool readMoney(const std::string& prompt, long long& amount) const;
     bool readText(const std::string& prompt, std::string& value, bool allowEmpty = false) const;
     bool readDate(const std::string& prompt, Date& date) const;
+    bool readRecurringReferences(TransactionType type, int& walletId, int& sourceOrCategoryId) const;
+    bool readRecurringDetails(TransactionType type, RecurringTransaction& recurring) const;
 
     // Menu & Navigation
     void displayMenu() const;
@@ -49,6 +51,9 @@ private:
     bool addIncome();
     bool addExpense();
     void viewTransactions(TransactionType type) const;
+
+    // Recurring Transaction Operations
+    bool createRecurringTransaction();
 
     // Private Members
     WalletManager m_walletManager;
