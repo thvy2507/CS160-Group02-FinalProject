@@ -452,7 +452,7 @@ void FinanceManager::runExpenseCategoryMenu() {
 
 void FinanceManager::runStatisticsMenu() const {
     StatisticsMenu menu;
-    menu.run(m_transactionManager);
+    menu.run(m_transactionManager, m_walletManager);
 }
 
 void FinanceManager::runWalletMenu() {

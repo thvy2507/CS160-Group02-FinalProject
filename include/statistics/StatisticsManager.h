@@ -2,8 +2,9 @@
  * @file StatisticsManager.h
  * @author TV4
  * @brief Provides financial reports and statistics.
- * @note Sprint 2 implements date-range summaries.
- * Other reports are deferred to later sprints.
+ * @note Sprint 3 supports date-range summaries for all wallets
+ * and individual active wallets.
+ * Annual overview and breakdown reports are deferred to later sprints.
  */
 
 #pragma once
