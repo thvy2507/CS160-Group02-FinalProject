@@ -3,7 +3,7 @@
 **Project:** Personal Finance Manager
 **Owner:** TV1 — Core & Integration
 **Sprint:** Sprint 3 — Persistence & Recurring Transactions
-**Status:** Design specification; implementation and verification pending.
+**Status:** Shared format and Binary I/O foundation implemented and tested. Module-specific persistence and integration are in progress.
 
 ## 1. Overview
 
@@ -91,7 +91,9 @@ All data files use relative paths under the `data/` directory.
 
 Generated binary data files must not be committed to Git.
 
-**Pending coordination with TV3:** The two Description Pool files are proposed extensions to the existing file structure. Update `FILE_STRUCTURE.md` after confirmation.
+The Description Pool files follow the agreed shared binary format and are included in `FILE_STRUCTURE.md`.
+
+Transaction and Recurring persistence implementation follows the Sprint 3 scope.
 
 ## 4. Binary File Header
 
@@ -399,7 +401,14 @@ For the supported 32-bit application ID type, `INT32_MAX` is reserved as the exh
 
 Add operations must fail safely when no further ID can be assigned.
 
-****Pending coordination with TV3:** The two Description Pool files are proposed extensions reflected in `FILE_STRUCTURE.md`. Their implementation is subject to confirmation with TV3.
+### Physical Deletion Limitation
+
+Deriving the next ID from the maximum stored ID guarantees ID stability only when previously assigned IDs remain stored.
+
+If records are physically deleted, this approach cannot guarantee that deleted IDs will never be reused.
+
+A persistent next-ID mechanism or retained deletion records may be required in a later format revision.
+
 ## 10. File Validation and Error Handling
 
 ### 10.1. File-Level Validation
@@ -466,28 +475,75 @@ Managers remain responsible for serializing individual record fields, reconstruc
 
 Operations that encounter invalid data or I/O failures must report failure. Failed read operations must not overwrite their output values.
 
-Exact C++ utility interfaces will be defined during implementation.
+### 11.1. Shared Utility Interfaces
+
+The shared Binary I/O utilities are declared in `include/core/BinaryIO.h` and implemented in `src/core/BinaryIO.cpp`.
+
+| Group | Functions |
+|---|---|
+| Integer Write | `writeUInt8`, `writeUInt32`, `writeInt32`, `writeInt64` |
+| Integer Read | `readUInt8`, `readUInt32`, `readInt32`, `readInt64` |
+| File Header | `writeHeader`, `readHeader`, `validateHeader` |
+| File Operations | `getFileSize` |
+| String Pool | `isValidPoolReference`, `appendString`, `readString` |
+
+All utilities belong to the `BinaryIO` namespace.
+
+The utility layer handles binary encoding and structural validation. Module-specific validation and object reconstruction remain the responsibility of the corresponding Managers.
+
+The utilities require seekable binary streams where positioning operations are used and assume the default stream exception mask.
+
+### 11.2. Manager Persistence Interfaces
+
+Master Data Managers use:
+
+```cpp
+bool loadFromBinary(const std::string& recordFilePath, const std::string& namePoolPath);
+bool saveToBinary(const std::string& recordFilePath, const std::string& namePoolPath) const;
+```
+
+Transaction and Recurring Transaction Managers use:
+
+```cpp
+bool loadFromBinary(const std::string& recordFilePath, const std::string& descriptionPoolPath);
+bool saveToBinary(const std::string& recordFilePath, const std::string& descriptionPoolPath) const;
+```
+
+These interfaces define the shared persistence contract. Their implementation status may differ according to the Sprint 3 module scope.
 
 ## 12. Module Integration
 
 ### 12.1. Loading Order
 
-```text
-Master Data
-    |
-    v
-Transactions
-    |
-    v
-Recurring State
-    |
-    v
-Application Ready
-```
+FinanceManager is responsible for coordinating application-level data loading.
 
-Master Data must be available before restoring Transaction and Recurring references.
+Modules must be loaded in the following order:
 
-Wallet balances are restored from Wallet records. Transaction loading must not replay financial operations.
+1. Wallets
+2. Income Sources
+3. Expense Categories
+4. Transactions
+5. Recurring Transaction State
+
+Master Data must be restored before loading records that reference Wallet, Income Source, or Expense Category IDs.
+
+**Balance Restoration Rules**
+
+- Restore both initial and current wallet balances directly from Wallet records.
+- Restore existing transactions without calling `addIncome()` or `addExpense()`.
+- Preserve historical references to soft-deleted Master Data records.
+- Restore recurring schedules and generation state without generating new transactions.
+- Statistics must access restored data through read-only interfaces.
+
+**Failure Handling**
+
+- Each Manager must preserve its existing state if its load operation fails.
+- Dependent modules must not be loaded if a required dependency fails to load.
+- The application must not treat partially loaded datasets as a complete, successfully restored state.
+
+Loading and recurring generation are separate operations.
+
+Full application-level persistence orchestration and atomic multi-module loading are deferred to Sprint 4. Sprint 3 verification focuses on individual module restoration and the implemented persistence operations.
 
 ### 12.2. Recurring Generation Dependency
 
@@ -506,7 +562,39 @@ RecurringTransactionManager is responsible for schedule evaluation and generatio
 
 TransactionManager is responsible for actual Income/Expense creation and balance updates.
 
-The exact generation method signature must be agreed upon by TV1 and TV3 before integration.
+The agreed generation interface is:
+
+```cpp
+bool generateMonthlyTransactions(const Date& asOfDate, TransactionManager& transactionManager);
+```
+
+**Generation Contract**
+
+- Evaluate monthly schedules using the supplied `asOfDate`.
+- Generate all due monthly occurrences, including missed months.
+- Use the last day of the month when the scheduled day exceeds the number of days in that month.
+- Respect start dates, optional end dates, and active status.
+- Generate actual transactions through `addIncome()` or `addExpense()`.
+- Do not independently deposit or withdraw wallet balances.
+- Prevent duplicate generation within the same month.
+- Update the last generated date only after successful transaction creation.
+- Preserve generation history when editing recurring schedules.
+- Preserve existing transactions when deleting recurring schedules.
+- Return `true` when all due transactions are generated successfully or when no transactions are due.
+- Return `false` when at least one due transaction cannot be generated.
+- Preserve successfully generated transactions when another generation fails.
+- Stop processing the failed schedule while continuing to evaluate other schedules.
+- Allow failed occurrences to be retried during subsequent generation calls.
+
+**CLI Integration**
+
+FinanceManager provides recurring transaction creation, viewing, editing, deletion, and manual monthly generation.
+
+The user supplies an `asOfDate` when requesting generation. FinanceManager reports the number of successfully generated transactions and whether any generation failures occurred.
+
+Recurring schedules and generation state are currently maintained in memory.
+
+Missed-month handling and in-session duplicate prevention are implemented in Sprint 3. Atomic batch generation, recurring persistence, and full cross-session duplicate prevention remain deferred.
 
 ### 12.3. Statistics
 

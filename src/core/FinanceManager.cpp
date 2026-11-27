@@ -18,7 +18,10 @@
 FinanceManager::FinanceManager()
     : m_transactionManager(&m_walletManager,
                            &m_incomeSourceManager,
-                           &m_expenseCategoryManager) {}
+                           &m_expenseCategoryManager),
+      m_recurringTransactionManager(&m_walletManager,
+                                    &m_incomeSourceManager,
+                                    &m_expenseCategoryManager) {}
 
 // Application Control
 void FinanceManager::run() {
@@ -131,6 +134,120 @@ bool FinanceManager::readDate(const std::string& prompt, Date& date) const {
     }
 }
 
+bool FinanceManager::readRecurringReferences(
+    TransactionType type, int& walletId,
+    int& sourceOrCategoryId) const {
+
+    if (type == TransactionType::INCOME && m_incomeSourceManager.getActiveCount() == 0) {
+        std::cout << "Please create an income source first.\n";
+        return false;
+    }
+
+    if (type == TransactionType::EXPENSE && m_expenseCategoryManager.getActiveCount() == 0) {
+        std::cout << "Please create an expense category first.\n";
+        return false;
+    }
+
+    m_walletManager.viewAllWallets();
+
+    if (!readInt("Wallet ID: ", walletId)) {
+        return false;
+    }
+
+    if (!m_walletManager.exists(walletId)) {
+        std::cout << "Wallet not found.\n";
+        return false;
+    }
+
+    if (type == TransactionType::INCOME) {
+        m_incomeSourceManager.viewAllIncomeSources();
+
+        if (!readInt("Income source ID: ", sourceOrCategoryId)) {
+            return false;
+        }
+
+        if (!m_incomeSourceManager.exists(sourceOrCategoryId)) {
+            std::cout << "Income source not found.\n";
+            return false;
+        }
+    } else {
+        m_expenseCategoryManager.viewAllExpenseCategories();
+
+        if (!readInt("Expense category ID: ", sourceOrCategoryId)) {
+            return false;
+        }
+
+        if (!m_expenseCategoryManager.exists(sourceOrCategoryId)) {
+            std::cout << "Expense category not found.\n";
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool FinanceManager::readRecurringDetails(
+    TransactionType type, RecurringTransaction& recurring) const {
+
+    int walletId, sourceOrCategoryId, dayOfMonth;
+    long long amount;
+    Date startDate;
+    std::string description;
+    int hasEndDate;
+
+    if (!readRecurringReferences(type, walletId, sourceOrCategoryId)) {
+        return false;
+    }
+
+    if (!readMoney("Amount (VND): ", amount)) {
+        return false;
+    }
+
+    if (amount <= 0) {
+        std::cout << "Amount must be greater than zero.\n";
+        return false;
+    }
+
+    if (!readDate("Start date (DD/MM/YYYY): ", startDate) || !readInt("Day of month (1-31): ", dayOfMonth)) {
+        return false;
+    }
+
+    if (dayOfMonth < MIN_DAY_OF_MONTH || dayOfMonth > MAX_DAY_OF_MONTH) {
+        std::cout << "Invalid day of month.\n";
+        return false;
+    }
+
+    if (!readText("Description: ", description, true) || !readInt("Set end date? (1. Yes, 0. No): ", hasEndDate)) {
+        return false;
+    }
+
+    if (hasEndDate != 0 && hasEndDate != 1) {
+        std::cout << "Invalid option.\n";
+        return false;
+    }
+
+    RecurringTransaction candidate(RecurringTransaction::INVALID_ID,
+                                   type, amount, description, walletId,
+                                   sourceOrCategoryId, startDate, dayOfMonth);
+
+    if (hasEndDate == 1) {
+        Date endDate;
+        if (!readDate("End date (DD/MM/YYYY): ", endDate)) {
+            return false;
+        }
+
+        if (endDate < startDate) {
+            std::cout << "End date cannot be before start date.\n";
+            return false;
+        }
+
+        candidate.setEndDate(endDate);
+    }
+
+    recurring = candidate;
+    return true;
+}
+
 // Menu & Navigation
 void FinanceManager::displayMenu() const {
     std::cout << "\n===== PERSONAL FINANCE MANAGER =====\n";
@@ -165,7 +282,7 @@ bool FinanceManager::handleChoice(int choice) {
             return true;
 
         case 5:
-            std::cout << "This module is not implemented yet.\n";
+            runRecurringMenu();
             return true;
 
         default:
@@ -558,6 +675,59 @@ void FinanceManager::runWalletMenu() {
     }
 }
 
+void FinanceManager::runRecurringMenu() {
+    while (true) {
+        std::cout << "\n===== RECURRING TRANSACTIONS =====\n";
+        std::cout << "1. Create Recurring Transaction\n";
+        std::cout << "2. View Recurring Transactions\n";
+        std::cout << "3. Edit Recurring Transaction\n";
+        std::cout << "4. Delete Recurring Transaction\n";
+        std::cout << "5. Generate Monthly Transactions\n";
+        std::cout << "0. Back\n";
+
+        int choice;
+
+        if (!readInt("Choose an option: ", choice)) {
+            return;
+        }
+
+        switch (choice) {
+            case 0:
+                return;
+
+            case 1:
+                if (!createRecurringTransaction()) {
+                    return;
+                }
+                break;
+
+            case 2:
+                m_recurringTransactionManager.viewAllRecurringTransactions();
+                break;
+
+            case 3:
+                if (!editRecurringTransaction()) {
+                    return;
+                }
+                break;
+
+            case 4:
+                if (!deleteRecurringTransaction()) {
+                    return;
+                }
+                break;
+
+            case 5:
+                if (!generateMonthlyTransactions()) {
+                    return;
+                }
+                break;
+
+            default:
+                std::cout << "Invalid option. Please try again.\n";
+        }
+    }
+}
 // Transaction Operations
 // Return false on end-of-input; otherwise continue menu navigation.
 bool FinanceManager::addIncome() {
@@ -724,4 +894,145 @@ void FinanceManager::viewTransactions(TransactionType type) const {
     if (!found) {
         std::cout << "No transactions found.\n";
     }
+}
+
+// Recurring Transaction Operations
+bool FinanceManager::createRecurringTransaction() {
+    if (m_walletManager.getActiveWalletCount() == 0) {
+        std::cout << "Please create a wallet first.\n";
+        return true;
+    }
+
+    int typeChoice;
+
+    std::cout << "1. Income\n";
+    std::cout << "2. Expense\n";
+
+    if (!readInt("Transaction type: ", typeChoice)) {
+        return false;
+    }
+
+    if (typeChoice != 1 && typeChoice != 2) {
+        std::cout << "Invalid transaction type.\n";
+        return true;
+    }
+
+    TransactionType type = (typeChoice == 1) ? TransactionType::INCOME : TransactionType::EXPENSE;
+
+    RecurringTransaction recurring;
+
+    if (!readRecurringDetails(type, recurring)) {
+        return static_cast<bool>(std::cin);
+    }
+
+    if (m_recurringTransactionManager.createRecurringTransaction(recurring)) {
+        std::cout << "Recurring transaction created successfully.\n";
+    } else {
+        std::cout << "Unable to create recurring transaction.\n";
+    }
+
+    return true;
+}
+
+bool FinanceManager::editRecurringTransaction() {
+    if (m_recurringTransactionManager.getRecurringTransactionCount() == 0) {
+        std::cout << "No recurring transactions.\n";
+        return true;
+    }
+
+    m_recurringTransactionManager.viewAllRecurringTransactions();
+
+    int id;
+    if (!readInt("Recurring transaction ID: ", id)) {
+        return false;
+    }
+
+    const RecurringTransaction* existing = m_recurringTransactionManager.getRecurringTransactionById(id);
+    if (!existing) {
+        std::cout << "Recurring transaction not found.\n";
+        return true;
+    }
+
+    if (m_walletManager.getActiveWalletCount() == 0) {
+        std::cout << "Please create a wallet first.\n";
+        return true;
+    }
+
+    RecurringTransaction updated;
+    if (!readRecurringDetails(existing->getType(), updated)) {
+        return static_cast<bool>(std::cin);
+    }
+
+    int activeChoice;
+    if (!readInt("Status (1. Active, 0. Inactive): ", activeChoice)) {
+        return false;
+    }
+
+    if (activeChoice != 0 && activeChoice != 1) {
+        std::cout << "Invalid status.\n";
+        return true;
+    }
+
+    updated.setActive(activeChoice == 1);
+    if (m_recurringTransactionManager.editRecurringTransaction(id, updated)) {
+        std::cout << "Recurring transaction updated successfully.\n";
+    } else {
+        std::cout << "Unable to update recurring transaction.\n";
+    }
+
+    return true;
+}
+
+bool FinanceManager::deleteRecurringTransaction() {
+    if (m_recurringTransactionManager.getRecurringTransactionCount() == 0) {
+        std::cout << "No recurring transactions.\n";
+        return true;
+    }
+
+    m_recurringTransactionManager.viewAllRecurringTransactions();
+
+    int id;
+    if (!readInt("Recurring transaction ID: ", id)) {
+        return false;
+    }
+
+    if (m_recurringTransactionManager.deleteRecurringTransaction(id)) {
+        std::cout << "Recurring transaction deleted successfully.\n";
+    } else {
+        std::cout << "Recurring transaction not found.\n";
+    }
+
+    return true;
+}
+
+bool FinanceManager::generateMonthlyTransactions() {
+    if (m_recurringTransactionManager.getRecurringTransactionCount() == 0) {
+        std::cout << "No recurring transactions.\n";
+        return true;
+    }
+
+    Date asOfDate;
+    if (!readDate("Generate up to (DD/MM/YYYY): ", asOfDate)) {
+        return false;
+    }
+
+    int previousCount = m_transactionManager.getTransactionCount();
+
+    bool success = m_recurringTransactionManager.generateMonthlyTransactions(
+        asOfDate, m_transactionManager
+    );
+
+    int generatedCount =
+        m_transactionManager.getTransactionCount() - previousCount;
+    std::cout << "Generated transactions: " << generatedCount << "\n";
+
+    if (!success) {
+        std::cout << "Some recurring transactions could not be generated.\n";
+    } else if (generatedCount == 0) {
+        std::cout << "No recurring transactions are due.\n";
+    } else {
+        std::cout << "Monthly transactions generated successfully.\n";
+    }
+
+    return true;
 }

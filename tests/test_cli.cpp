@@ -264,6 +264,179 @@ bool testEndOfInput() {
     return expectContains(output, "Wallet name: ", "Handle end of input");
 }
 
+bool testRecurringWorkflow() {
+    const std::string input =
+        "4\n1\nCash\n100000\n0\n"
+        "1\n5\n1\nSalary\n0\n0\n"
+        "2\n5\n1\nRent\n0\n0\n"
+        "5\n"
+        "1\n1\n1\n1\n50000\n01/11/2026\n5\nSalary\n0\n"
+        "1\n2\n1\n1\n30000\n01/11/2026\n10\nRent\n0\n"
+        "5\n30/11/2026\n"
+        "3\n1\n1\n1\n70000\n01/11/2026\n15\nUpdated Salary\n0\n1\n"
+        "5\n30/11/2026\n"
+        "4\n2\n"
+        "5\n31/12/2026\n"
+        "2\n0\n"
+        "1\n2\n0\n"
+        "2\n2\n0\n"
+        "4\n2\n0\n"
+        "0\n";
+
+    const std::string output = runCli(input);
+    bool passed = true;
+
+    passed &= expectContains(output,
+        "Recurring transaction created successfully.",
+        "Create recurring transaction");
+
+    passed &= expectContains(output,
+        "Generated transactions: 2\n"
+        "Monthly transactions generated successfully.",
+        "Generate recurring income and expense");
+
+    passed &= expectContains(output,
+        "Recurring transaction updated successfully.",
+        "Edit generated schedule");
+
+    passed &= expectContains(output,
+        "Generated transactions: 0\n"
+        "No recurring transactions are due.",
+        "Prevent duplicate generation after editing");
+
+    passed &= expectContains(output,
+        "Recurring transaction deleted successfully.",
+        "Delete generated schedule");
+
+    passed &= expectContains(output,
+        "Generated transactions: 1\n"
+        "Monthly transactions generated successfully.",
+        "Generate next monthly occurrence");
+
+    passed &= expectContains(output,
+        "ID: 1 | Income | Day 15 of each month | Wallet: 1 | "
+        "70000 VND | Updated Salary | Start: 1/11/2026 | "
+        "End: none | Last generated: 15/12/2026 | Active",
+        "View updated recurring schedule");
+
+    passed &= expectContains(output,
+        "ID: 1 | Income | 5/11/2026 | Wallet: 1 | 50000 VND | Salary",
+        "Preserve original generated income");
+
+    passed &= expectContains(output,
+        "ID: 2 | Expense | 10/11/2026 | Wallet: 1 | 30000 VND | Rent",
+        "Preserve expense after deleting schedule");
+
+    passed &= expectContains(output,
+        "ID: 3 | Income | 15/12/2026 | Wallet: 1 | 70000 VND | Updated Salary",
+        "Apply edited schedule to future occurrence");
+
+    passed &= expectContains(output,
+        "ID: 1 | Name: Cash | Balance: 190000",
+        "Final balance after recurring workflow");
+
+    return passed;
+}
+
+bool testRecurringPartialFailure() {
+    const std::string input =
+        "4\n1\nCash\n10000\n0\n"
+        "1\n5\n1\nSalary\n0\n0\n"
+        "2\n5\n1\nRent\n0\n0\n"
+        "5\n"
+        "1\n2\n1\n1\n30000\n01/11/2026\n5\nRent\n0\n"
+        "1\n1\n1\n1\n50000\n01/11/2026\n10\nSalary\n0\n"
+        "5\n30/11/2026\n"
+        "5\n30/11/2026\n"
+        "5\n30/11/2026\n"
+        "0\n"
+        "4\n2\n0\n"
+        "0\n";
+
+    const std::string output = runCli(input);
+    bool passed = true;
+
+    passed &= expectContains(output,
+        "Generated transactions: 1\n"
+        "Some recurring transactions could not be generated.",
+        "Report partial generation failure");
+
+    passed &= expectContains(output,
+        "Generated transactions: 1\n"
+        "Monthly transactions generated successfully.",
+        "Retry failed recurring expense");
+
+    passed &= expectContains(output,
+        "Generated transactions: 0\n"
+        "No recurring transactions are due.",
+        "Prevent duplicates after retry");
+
+    passed &= expectContains(output,
+        "ID: 1 | Name: Cash | Balance: 30000",
+        "Final balance after retry");
+
+    return passed;
+}
+
+bool testRecurringInvalidInput() {
+    const std::string input =
+        "5\n1\n0\n"
+        "4\n1\nCash\n100000\n0\n"
+        "5\n1\n1\n0\n"
+        "1\n5\n1\nSalary\n0\n0\n"
+        "5\n"
+        "1\n9\n"
+        "1\n1\n999\n"
+        "1\n1\n1\n999\n"
+        "1\n1\n1\n1\n-1000\n"
+        "1\n1\n1\n1\n50000\n01/11/2026\n32\n"
+        "1\n1\n1\n1\n50000\n01/11/2026\n5\nSalary\n9\n"
+        "1\n1\n1\n1\n50000\n01/11/2026\n5\nSalary\n1\n31/10/2026\n"
+        "2\n"
+        "0\n"
+        "4\n2\n0\n"
+        "0\n";
+
+    const std::string output = runCli(input);
+    bool passed = true;
+
+    passed &= expectContains(output, "Please create a wallet first.", "Reject recurring creation without wallet");
+
+    passed &= expectContains(output, "Please create an income source first.", "Reject recurring creation without source");
+
+    passed &= expectContains(output, "Invalid transaction type.", "Reject invalid recurring type");
+
+    passed &= expectContains(output, "Wallet not found.", "Reject invalid recurring wallet");
+
+    passed &= expectContains(output, "Income source not found.", "Reject invalid recurring source");
+
+    passed &= expectContains(output, "Amount must be greater than zero.", "Reject invalid recurring amount");
+
+    passed &= expectContains(output, "Invalid day of month.", "Reject invalid monthly day");
+
+    passed &= expectContains(output, "Invalid option.", "Reject invalid end date option");
+
+    passed &= expectContains(output, "End date cannot be before start date.", "Reject reversed recurring dates");
+
+    passed &= expectContains(output, "No recurring transactions.", "Invalid inputs create no schedules");
+
+    passed &= expectContains(output, "ID: 1 | Name: Cash | Balance: 100000", "Balance preserved after invalid recurring input");
+
+    return passed;
+}
+
+bool testRecurringEndOfInput() {
+    const std::string input =
+        "4\n1\nCash\n100000\n0\n"
+        "1\n5\n1\nSalary\n0\n0\n"
+        "5\n"
+        "1\n1\n1\n1\n";
+
+    const std::string output = runCli(input);
+
+    return expectContains(output, "Amount (VND): ", "Handle end of input during recurring creation");
+}
+
 int main() {
     std::cout << "===== CLI INTEGRATION TESTS =====\n";
 
@@ -283,6 +456,18 @@ int main() {
 
     std::cout << "\n--- End of Input ---\n";
     passed &= testEndOfInput();
+
+    std::cout << "\n--- Recurring Workflow ---\n";
+    passed &= testRecurringWorkflow();
+
+    std::cout << "\n--- Recurring Partial Failure ---\n";
+    passed &= testRecurringPartialFailure();
+
+    std::cout << "\n--- Recurring Input Validation ---\n";
+    passed &= testRecurringInvalidInput();
+
+    std::cout << "\n--- Recurring End of Input ---\n";
+    passed &= testRecurringEndOfInput();
 
     if (!passed) {
         std::cout << "\nSome CLI integration tests failed.\n";
