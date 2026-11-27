@@ -3,17 +3,20 @@
  * @author TV3
  * @brief Interface for managing monthly recurring transactions
  * @note Week 1 - declarations only. Generation is planned for a later week
+ * @note Week 3 - adds generateDueTransactions(); the TransactionManager is passed in by the caller
  */
 
 #ifndef RECURRING_TRANSACTION_MANAGER_H
 #define RECURRING_TRANSACTION_MANAGER_H
 
+#include "core/Date.h"
 #include "core/DynamicArray.h"
 #include "models/RecurringTransaction.h"
 
 class WalletManager;
 class IncomeSourceManager;
 class ExpenseCategoryManager;
+class TransactionManager;
 
 class RecurringTransactionManager {
 public:
@@ -33,6 +36,11 @@ public:
     // Search & Access
     const RecurringTransaction* getRecurringTransactionById(int id) const;
     int getRecurringTransactionCount() const;
+
+    // Domain-specific Operations
+    // Creates every transaction that is due up to "today" and returns how many were created
+    int generateDueTransactions(const Date& today,
+                                TransactionManager& transactionManager);
 
 private:
     // Private Helpers
